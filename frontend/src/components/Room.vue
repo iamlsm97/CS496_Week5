@@ -81,14 +81,14 @@
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4>투표 진행 중&nbsp;(17/21)</h4>
+              <h4><b>이승민 회원을 제명한다&nbsp;</b></h4><h4>투표 진행 중&nbsp;(17/21)</h4>
             </div>
             <h5>left: rnango, null, rongrong, seol</h5>
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4>투표 결과:&nbsp;</h4><h4 class="vote-result-yes"><b>찬성&nbsp;</b></h4>
+              <h4><b>이승민 회원을 제명한다&nbsp;</b></h4><h4>투표 결과:&nbsp;</h4><h4 class="vote-result-yes"><b>찬성&nbsp;</b></h4>
             </div>
             <h5>(21명 중 17명 찬성, 3명 반대, 1명 기권)</h5>
           </div>
