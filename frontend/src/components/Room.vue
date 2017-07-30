@@ -234,6 +234,7 @@
   .blank{
     flex: 1;
   }
+<<<<<<< HEAD
   .vote-result-header{
     display: flex;
     margin-bottom: -30px;
@@ -244,6 +245,8 @@
   .vote-result-no{
     color: #FF0000;
   }
+=======
+>>>>>>> 2bb6a36ea7e92737458fb23c6c144849f623c781
   @media (max-width: 1439px){
     .cell-blank{
       display: none;
