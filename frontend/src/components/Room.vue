@@ -136,6 +136,21 @@
           <div>
             <h3>Past Results</h3>
           </div>
+          <div class="add-vote">
+            <div class="vote-result-header">
+              <!--"vote-result-no"-->
+              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-no"><b>반대&nbsp;</b></h4>
+            </div>
+            <h5>(21명 중 3명 찬성, 17명 반대, 1명 기권)</h5>
+          </div>
+          <div class="add-vote">
+            <div class="vote-result-header">
+              <!--"vote-result-no"-->
+              <h4><b>고지훈 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성&nbsp;</b></h4>
+            </div>
+            <h5>(21명 중 21명 찬성, 0명 반대, 0명 기권)</h5>
+          </div>
+          <!--
           <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
             <thead>
               <tr>
@@ -158,6 +173,7 @@
               </tr>
             </tbody>
           </table>
+          -->
         </div>
         <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
       </div>
