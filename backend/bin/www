@@ -206,8 +206,9 @@ io.on('connection', (socket) => {
     const roomCode = getRandStr(8);
     console.log(`roomcode: ${roomCode}`);
     console.log(`secret_key: ${secret_key}`);
-    jwt.sign({ roomCode: roomCode }, secret_key, { algorithm: 'RS256', expiresIn: '1d' }, function (err, token) {
+    jwt.sign({ roomCode }, secret_key, { expiresIn: '6h' }, (err, token) => {
       if (err) {
+        console.log(err);
         console.log(`token: ${token}`);
         console.log('token creation failed');
         socket.emit('creationFailed');
