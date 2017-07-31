@@ -55,6 +55,22 @@
         userCode: '',
       };
     },
+    sockets: {
+      verifyRoomSuccess (data) {
+        console.log(data);
+        this.$router.push(`/room/${this.roomCode}`);
+      },
+      verifyRoomFailed () {
+        this.$router.push('/');
+      },
+      verifyUserSuccess (data) {
+        console.log(data);
+        this.$router.push(`/user/${this.userCode}`);
+      },
+      verifyUserFailed () {
+        this.$router.push('/');
+      },
+    },
     computed: {
       createType () {
         if (this.roomCode !== '') {
@@ -66,14 +82,16 @@
     methods: {
       enterRoomCode () {
         if (this.roomCode !== '') {
-          this.$router.push(`/room/${this.roomCode}`);
+          // this.$router.push(`/room/${this.roomCode}`);
+          this.$socket.emit('verifyRoom', this.roomCode);
         } else {
           this.$router.push('/create');
         }
       },
       enterUserCode () {
         if (this.userCode !== '') {
-          this.$router.push(`/user/${this.userCode}`);
+          this.$socket.emit('verifyUser', this.userCode);
+          // this.$router.push(`/user/${this.userCode}`);
         }
       },
     },
