@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+'use strict';
 /**
  * Module dependencies.
  */
@@ -25,7 +25,6 @@ const server = http.createServer(app);
  * Link socket.io to server
  */
 const io = require('socket.io')(server);
-
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -95,12 +94,176 @@ function onListening () {
 }
 
 /**
+ * Some helper Functions/Classes/Variables
+ */
+
+
+const jwt = require('jsonwebtoken');
+const secret_key = require('../keys/jwt_secret');
+
+function getRandStr(length){
+  const letter = []
+  for(let i=0;i<10;i++){
+    letter.push(String.fromCharCode(48+i));
+  }
+  for(let i=0;i<26;i++){
+    letter.push(String.fromCharCode(65+i));
+    letter.push(String.fromCharCode(97+i));
+  }
+}
+
+const roomList = {};
+const uniqueList = {};
+class Room{
+  constructor(name, token){
+    this.name = name;
+    this.token = token;
+    this.user = [];
+    // {'name': 'mango', 'code': 'bntjdkgm', 'vote_status': '0'}
+    // vote_status: 0 -> cannot vote, 1 -> can vote
+    this.voteResult = [];
+    this.voting = 0;
+    this.showUrl = "about:blank;";
+    // 0: no voting, 1: 
+    this.voteList = [];
+  }
+  addUser(name, code){
+    this.user.push({name: name, code: code, vote_status: 0});
+  }
+  changeRole(code){
+    for(let i=0;i<this.user.length;i++){
+      if(this.user[i].code === code){
+        if(this.user[i].vote_status == 0) this.user[i].vote_status = 1;
+        else this.user[i].vote_status = 0;
+      }
+    }
+  }
+  startVote(){
+    this.voting = 1;
+    this.voteResult = [];
+    this.voteList = [];
+    for(let i=0;i<this.user.length;i++){
+      this.voteResult.push(-1);
+      if(this.user[i].vote_status > 0){
+        this.voteList.push({name: name, vote: -1});
+      }
+    }
+    var updateVoteStatus = setInterval( () => {
+      if(!this.voting){
+        clearInterval(updateVoteStatus);
+      }else{
+        var rtnList = [];
+        for(let i=0;i<this.user.length;i++){
+          if(this.user[i].vote_status > 0){
+            rtnList.push({name: name, vote: this.voteResult[i]});
+          }
+        }
+        this.voteList = rtnList;
+      }
+    }, 200);
+  }
+  getVoteList(){
+    return this.voteList;
+  }
+  finishVote(){
+    this.voting = 2;
+    setTimeout( () => {this.voting = 0}, 3000);
+  }
+};
+
+/**
  * socket.io Listener & Emitter
  */
-io.on('connection', (socket) => {
-  console.log('-----socket connected');
 
+
+
+io.on('connection', (socket) => {
+  console.log('-----socket connected '+ socket.id);
   socket.on('hello', () => {
-    console.log('hello vue.js');
+    console.log('hello vue.js ');
+  });
+  socket.on('disconnect', () => {
+    console.log('disconnected ' + socket.id);
+  });
+  socket.on('createRoom', (roomName) => {
+    let roomId = undefined;
+    let roomCode = getRandStr(8);
+    jwt.sign(roomCode, secret_key, {expiresIn: '30d'}, function(err, token){
+      if(err){
+        console.log("token creation failed");
+        socket.emit('creationFailed');
+      }else{
+        token = roomId;
+        const newRoom = new Room(roomName);
+        roomList[roomId] = newRoom;
+        socket.emit('creationSuccess', roomId);
+      }
+    });
+  });
+  socket.on('createUser', (roomId, userName) => {
+    const roomTarget = roomList[roomId];
+    if(!roomTarget){
+      console.log("ROOMTARGET ERROR");
+      socket.emit('userAddFailed');
+    }else{
+      console.log("ROOM FOUND");
+      let newCode = getRandStr(8);
+      while(uniqueList[newCode] !== undefined){
+        newCode = getRandStr(8);
+      }
+      uniqueList[newCode] = {room: roomId, name: userName};
+      roomTarget.addUser(userName, newCode);
+      socket.emit('userAddSuccess', this.user);
+    }
+  });
+  socket.on('deleteUser', (roomId, userCode) => {
+    const roomTarget = roomList[roomId];
+    if(!roomTarget || !uniqueList[userCode]){
+      console.log("deleteUser error");
+      socket.emit('deleteUserFailed');
+    }else if(roomTarget.voting > 0){
+      console.log("deleteUser error while voting");
+      socket.emit('deleteUserFailed');
+    }else{
+      delete uniqueList[userCode];
+      socket.emit('deleteUserSuccess');
+    }
+  });
+  socket.on('changeLink', (roomId, newUrl) => {
+    const roomTarget = roomList[roomId];
+    if(!roomTarget){
+      console.log("changeLink error");
+      socket.emit('changeLinkFailed');
+    }else{
+      roomTarget.showUrl = newUrl;
+      socket.emit('changeLinkSuccess');
+    }
+  });
+  socket.on('addVote', (roomId, data) => {
+    const roomTarget = roomList[roomId];
+    if(!roomTarget || data.question === ""){
+      socket.emit('addVoteFailed');
+    }else{
+      startVote();
+    }
+  });
+  socket.on('userVote', (userCode, result) => {
+    if(userCode in uniqueList){
+      //0: 기권, 1: 찬성, 2: 반대
+      if(result === 0 || result === 1 || result === 2){
+        if(uniqueList[userCode].room in roomList){
+          socket.emit('userVoteSuccess');
+        }else{
+          console.log('userVoteFailed - Room Not Found');
+          socket.emit('userVoteFailed');
+        }
+      }else{
+        console.log('userVoteFailed - Typecheck Failed');
+        socket.emit('userVoteFailed');
+      }
+    }else{
+      console.log('userVoteFailed');
+      socket.emit('userVoteFailed');
+    }
   });
 });
