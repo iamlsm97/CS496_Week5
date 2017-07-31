@@ -217,49 +217,56 @@ io.on('connection', (socket) => {
         roomId = token;
         const newRoom = new Room(roomName, roomId);
         roomList[roomId] = newRoom;
+        console.log(roomList);
         socket.emit('creationSuccess', roomId);
       }
     });
   });
+
   socket.on('verifyRoom', (roomCode) => {
-    jwt.verify(roomCode, secret_key, function(err, decoded){
-      if(err){
+    jwt.verify(roomCode, secret_key, function (err, decoded) {
+      if (err) {
         console.log('token verify failed!');
         socket.emit('verifyRoomFailed');
-      }else{
-        if(roomCode in roomList){
+      } else {
+        if (roomCode in roomList) {
           console.log(roomList[roomCode]);
           socket.emit('verifyRoomSuccess', roomList[roomCode]);
-        }else{
+        } else {
           console.log('Room not found');
           socket.emit('verifyRoomFailed');
         }
       }
     });
   });
+
   socket.on('verifyUser', (userCode) => {
-    if((userCode in uniqueList) && (uniqueList[userCode].room in roomList)){
+    if ((userCode in uniqueList) && (uniqueList[userCode].room in roomList)) {
       let found = false;
-      const roomTarget = roomList[uniqueList[userCode].room]; 
-      for(let i=0;i<roomTarget.user.length;i++){
-        if(roomTarget.user[i].code === userCode){
+      const roomTarget = roomList[uniqueList[userCode].room];
+      for (let i = 0; i < roomTarget.user.length; i += 1) {
+        if (roomTarget.user[i].code === userCode) {
           found = true;
           break;
         }
       }
-      if(found){
+      if (found) {
         socket.emit('verifyRoomSuccess', roomTarget);
-      }else{
+      } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');
       }
-    }else{
+    } else {
       console.log('User not found');
       socket.emit('verifyUserFailed');
     }
   });
-  socket.on('createUser', (roomId, userName) => {
-    const roomTarget = roomList[roomId];
+
+  socket.on('createUser', data => {
+    console.log(data.roomId);
+    console.log(data.userName);
+    console.log(roomList);
+    const roomTarget = roomList[data.roomId];
     if (!roomTarget) {
       console.log('ROOMTARGET ERROR');
       socket.emit('userAddFailed');
@@ -269,8 +276,8 @@ io.on('connection', (socket) => {
       while (uniqueList[newCode] !== undefined) {
         newCode = getRandStr(8);
       }
-      uniqueList[newCode] = { room: roomId, name: userName };
-      roomTarget.addUser(userName, newCode);
+      uniqueList[newCode] = { room: data.roomId, name: data.userName };
+      roomTarget.addUser(data.userName, newCode);
       socket.emit('userAddSuccess', newCode);
     }
   });
@@ -316,7 +323,7 @@ io.on('connection', (socket) => {
         if (uniqueList[userCode].room in roomList) {
           const roomTarget = roomList[uniqueList[userCode].room];
           let found = false;
-          for (let i = 0; i < roomTarget.user.length; i++) {
+          for (let i = 0; i < roomTarget.user.length; i += 1) {
             if (roomTarget.user[i].code === userCode && roomTarget.user[i].vote_status > 0) {
               found = true;
               roomTarget.voteResult[i] = result;
