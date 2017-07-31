@@ -1,1 +1,1 @@
-module.exports = "sparcs09sysop_is_rongrong"
+module.exports = 'sparcs09sysop_is_rongrong';

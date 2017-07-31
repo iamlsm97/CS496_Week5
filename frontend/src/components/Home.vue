@@ -18,7 +18,7 @@
               </md-input-container>
             </md-card-contents>
             <md-card-actions>
-              <md-button @click="enterRoomCode">Enter Room Code</md-button>
+              <md-button @click="enterRoomCode">{{ createType }}</md-button>
             </md-card-actions>
           </md-card-header>
         </md-card>
@@ -55,6 +55,14 @@
         userCode: '',
       };
     },
+    computed: {
+      createType () {
+        if (this.roomCode !== '') {
+          return 'ENTER ROOM CODE';
+        }
+        return 'CREATE ROOM';
+      },
+    },
     methods: {
       enterRoomCode () {
         if (this.roomCode !== '') {
@@ -66,8 +74,6 @@
       enterUserCode () {
         if (this.userCode !== '') {
           this.$router.push(`/user/${this.userCode}`);
-        } else {
-          console.log('hi');
         }
       },
     },
