@@ -201,6 +201,7 @@ io.on('connection', (socket) => {
     console.log(`-----socket disconnected ${socket.id}`);
   });
 
+  /* Socket About Room */
   socket.on('createRoom', (roomName) => {
     let roomId;
     const roomCode = getRandStr(8);
@@ -220,7 +221,43 @@ io.on('connection', (socket) => {
       }
     });
   });
-
+  socket.on('verifyRoom', (roomCode) => {
+    jwt.verify(roomCode, secret_key, function(err, decoded){
+      if(err){
+        console.log('token verify failed!');
+        socket.emit('verifyRoomFailed');
+      }else{
+        if(roomCode in roomList){
+          console.log(roomList[roomCode]);
+          socket.emit('verifyRoomSuccess', roomList[roomCode]);
+        }else{
+          console.log('Room not found');
+          socket.emit('verifyRoomFailed');
+        }
+      }
+    });
+  });
+  socket.on('verifyUser', (userCode) => {
+    if((userCode in uniqueList) && (uniqueList[userCode].room in roomList)){
+      let found = false;
+      const roomTarget = roomList[uniqueList[userCode].room]; 
+      for(let i=0;i<roomTarget.user.length;i++){
+        if(roomTarget.user[i].code === userCode){
+          found = true;
+          break;
+        }
+      }
+      if(found){
+        socket.emit('verifyRoomSuccess', roomTarget);
+      }else{
+        console.log('User already deleted');
+        socket.emit('verifyUserFailed');
+      }
+    }else{
+      console.log('User not found');
+      socket.emit('verifyRoomFailed');
+    }
+  });
   socket.on('createUser', (roomId, userName) => {
     const roomTarget = roomList[roomId];
     if (!roomTarget) {
