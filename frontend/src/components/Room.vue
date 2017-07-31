@@ -81,14 +81,15 @@
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4><b>이승민 회원을 제명한다&nbsp;</b></h4><h4>투표 진행 중&nbsp;(17/21)</h4>
+              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>진행 중</b></h4>
             </div>
+            <h5>(21명 중 17명 투표)</h5>
             <h5>left: rnango, null, rongrong, seol</h5>
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4><b>이승민 회원을 제명한다&nbsp;</b></h4><h4>투표 결과:&nbsp;</h4><h4 class="vote-result-yes"><b>찬성&nbsp;</b></h4>
+              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
             </div>
             <h5>(21명 중 17명 찬성, 3명 반대, 1명 기권)</h5>
           </div>
@@ -146,9 +147,16 @@
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4><b>고지훈 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성&nbsp;</b></h4>
+              <h4><b>고지훈 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
             </div>
             <h5>(21명 중 21명 찬성, 0명 반대, 0명 기권)</h5>
+          </div>
+          <div class="add-vote">
+            <div class="vote-result-header">
+              <!--"vote-result-no"-->
+              <h4><b>고심 끝에 스팍스를 해체한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>무효</b></h4>
+            </div>
+            <h5>(21명 중 0명 찬성, 0명 반대, 21명 기권)</h5>
           </div>
           <!--
           <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
@@ -256,9 +264,15 @@
   }
   .vote-result-yes{
     color: #00AA00;
+    min-width: 60px;
   }
   .vote-result-no{
     color: #FF0000;
+    min-width: 60px;
+  }
+  .vote-result-none{
+    color: #777777;
+    min-width: 60px;
   }
   @media (max-width: 1439px){
     .cell-blank{
