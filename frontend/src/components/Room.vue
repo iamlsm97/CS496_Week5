@@ -3,13 +3,12 @@
     <header class="app-header mdl-layout__header mdl-layout__header--scroll">
       <div class="mdl-layout__header-row">
         <!-- Title -->
-        <span class="mdl-layout-title">SPARCS 2017 Summer 정기총회</span>
+        <span class="mdl-layout-title">ADMIT.IO > SPARCS 2017 Summer 정기총회</span>
         <!-- Add spacer, to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation -->
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="">방 코드 복사</a>
-          <a class="mdl-navigation__link" href="">유저 모드로 전환</a>
           <a class="mdl-navigation__link" href="">나가기</a>
         </nav>
       </div>
@@ -51,7 +50,7 @@
           <div class="add-vote">
             <h4>질문 추가</h4>
             <div class="grid-vertical mdl-grid">
-              <div class="mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--1-col-phone label-attributes">Question</div>
+              <div class="mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--1-col-phone label-attributes label-attributes-q">Question</div>
               <div class="mdl-cell--9-col mdl-cell--6-col-tablet mdl-cell--3-col-phone">
                 <div class="mdl-textfield mdl-js-textfield">
                   <input class="mdl-textfield__input" type="text" id="sample1">
@@ -81,7 +80,7 @@
           <div class="add-vote">
             <div class="vote-result-header">
               <!--"vote-result-no"-->
-              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>진행 중</b></h4>
+              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>???</b></h4>
             </div>
             <h5>(21명 중 17명 투표)</h5>
             <h5>left: rnango, null, rongrong, seol</h5>
@@ -101,7 +100,7 @@
         <div class="cell-userlist mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet mdl-cell--4-phone">
           <div class="header-wrapper">
             <div>
-              <h3>User List (3명 중 2명 참여)</h3>
+              <h3>User List</h3>
             </div>
             <div class="button-user-add">
               <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
@@ -110,25 +109,48 @@
               </button>
             </div>
           </div>
+          <div class="add-user">
+            <h4>유저 추가</h4>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="sample3">
+              <label class="mdl-textfield__label" for="sample3">Text...</label>
+            </div>
+          </div>
           <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
             <thead>
               <tr>
                 <th class="mdl-data-table__cell--non-numeric">User</th>
                 <th class="mdl-data-table__cell--non-numeric">UniqueCode</th>
+                <th class="mdl-data-table__cell--non-numeric">delete?</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="mdl-data-table__cell--non-numeric">mango</td>
                 <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
+                <td class="mdl-data-table__cell--non-numeric">
+                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                    DELETE
+                  </button>
+                </td>
               </tr>
               <tr>
                 <td class="mdl-data-table__cell--non-numeric">rongrong</td>
                 <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
+                <td class="mdl-data-table__cell--non-numeric">
+                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                    DELETE
+                  </button>
+                </td>
               </tr>
               <tr>
                 <td class="mdl-data-table__cell--non-numeric">null</td>
                 <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
+                <td class="mdl-data-table__cell--non-numeric">
+                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                    DELETE
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -220,7 +242,8 @@
     text-align: left;
     align-items: left;
   }
-  .add-vote{
+  .add-vote, .add-user{
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
     box-sizing: border-box;
     background-color: #DDDDDD;
     margin-top: 5px;
@@ -228,6 +251,9 @@
     padding-right: 20px;
     padding-top: 1px;
     padding-bottom: 10px;
+  }
+  .add-user{
+    margin-bottom: 15px;
   }
   .mdl-data-table{
     width: 100%;
@@ -243,11 +269,16 @@
     text-align: right;
     padding-right: 10px;
   }
+  .label-attributes-q{
+      margin-top: 4px;
+  }
+  /*
   .mdl-textfield{
     padding: 0px;
     margin-top: -5px;
     width: 100%;
   }
+  */
   .mdl-radio{
     margin-top: -2px;
   }
@@ -273,6 +304,13 @@
   .vote-result-none{
     color: #777777;
     min-width: 60px;
+  }
+  .mdl-textfield{
+    margin-top: -20px;
+    width: 100%;
+  }
+  .mdl-textfield__label{
+    top: 20px;
   }
   @media (max-width: 1439px){
     .cell-blank{

@@ -16,12 +16,14 @@
             <div class="mdl-card__supporting-text">
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="sample3">
-                <label class="mdl-textfield__label" for="sample3">Title</label>
+                <label class="mdl-textfield__label" for="sample3">Room Title</label>
               </div>
+              <!--
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="sample3">
                 <label class="mdl-textfield__label" for="sample3">YOUR NAME</label>
               </div>
+              -->
             </div>
             <div class="mdl-card__actions mdl-card--border">
               <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/create">
@@ -50,7 +52,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .create-room {
-    background: #000000;
+    background: #3F51b5;
     color: white;
   }
   header {

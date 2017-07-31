@@ -9,9 +9,7 @@
         <!-- Navigation -->
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="">유저 코드 복사</a>
-          <a class="mdl-navigation__link" href="">관리자 모드로 전환</a>
-          <a class="mdl-navigation__link" href="">투표 결과 보기</a>
-          <a class="mdl-navigation__link" href="">Log Out - Mango</a>
+          <a class="mdl-navigation__link" href="">나가기</a>
         </nav>
       </div>
     </header>
@@ -109,11 +107,12 @@
     margin-left: 20px;    
   }
   .readable{
-    background-color: #EEEEEE;
+    background-color: #DDDDDD;
     width: 100%;
     height: calc(100vh - 210px);
   }
   div.readable{
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
     padding: 10px;
     width: calc(100% - 20px);
     text-align: center;
