@@ -252,7 +252,21 @@ io.on('connection', (socket) => {
       //0: 기권, 1: 찬성, 2: 반대
       if(result === 0 || result === 1 || result === 2){
         if(uniqueList[userCode].room in roomList){
-          socket.emit('userVoteSuccess');
+          const roomTarget = roomList[uniqueList[userCode].room];
+          let found = false;
+          for(let i=0;i<roomTarget.user.length;i++){
+            if(roomTarget.user[i].code === userCode && roomTarget.user[i].vote_status > 0){
+              found = true;
+              roomTarget.voteResult[i] = result;
+              break;
+            }
+          }
+          if(found){
+            socket.emit('userVoteSuccess');
+          }else{
+            console.log('userVoteFailed - You do not have any access');
+            socket.emit('userVoteFailed');
+          }
         }else{
           console.log('userVoteFailed - Room Not Found');
           socket.emit('userVoteFailed');
@@ -262,7 +276,7 @@ io.on('connection', (socket) => {
         socket.emit('userVoteFailed');
       }
     }else{
-      console.log('userVoteFailed');
+      console.log('userVoteFailed - User not Exist');
       socket.emit('userVoteFailed');
     }
   });
