@@ -1,28 +1,219 @@
 <template>
+  <div class="main">
+    <md-toolbar>
+      <h1 class="md-title header-title" style="flex: 1;">SPARCS 정기총회</h1>
+      <md-button>유저 코드 복사</md-button>
+      <router-link tag="md-button" to="/">나가기</router-link>
+    </md-toolbar>
+    <md-layout md-row class="layout-room">
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="80" md-flex-large="70" md-flex-xlarge="70" class="layout-task">
+        <md-card md-with-hover class="card-userview">
+          <md-card-header>
+            <div class="card-header-flex">
+                <h1>현재 작업</h1>
+                <div class="button-with-h1">
+                  <md-button class="md-raised md-primary">
+                    <md-icon class="button-icon">done</md-icon>&nbsp;링크 변경
+                  </md-button>
+                </div>
+                <div class="button-with-h1">
+                  <md-button class="md-raised md-primary">
+                    <md-icon class="button-icon">add</md-icon>&nbsp;질문 추가
+                  </md-button>
+                </div>
+            </div>
+          </md-card-header>
+          <md-card-content>
+            <div class="card-header-flex">
+              <h2 style="min-width: 100px">현재 링크</h2>
+              <md-input-container md-clearable>
+                <label>PDF URL...</label>
+                <md-input v-model="initialValue"></md-input>
+              </md-input-container>
+            </div>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h2>질문 추가 (찬성/반대)</h2>
+                </div>
+              </md-card-header>
+              <md-card-content>
+                <div class="card-header-flex">
+                  <h2 style="min-width: 100px">질문</h2>
+                  <md-input-container md-clearable>
+                    <label>질문</label>
+                    <md-input></md-input>
+                  </md-input-container>
+                </div>
+                <div class="card-header-flex">
+                  <div style="flex: 1;"></div>
+                  <md-button class="md-raised md-primary">등록</md-button>
+                  <md-button class="md-raised md-accent">취소</md-button>
+                </div>
+              </md-card-content>
+            </md-card>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h2>오늘은 야식을 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-none"><b>진행 중</b></h2>
+                </div>
+                <h3 class="gap-closer">현재 21명 중 17명 투표</h3>
+              </md-card-header>
+            </md-card>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-no"><b>반대</b></h2>
+                </div>
+                <h3 class="gap-closer">총 21명 중 찬성 3, 반대 17, 기권 1</h3>
+              </md-card-header>
+            </md-card>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-none"><b>기권</b></h2>
+                </div>
+                <h3 class="gap-closer">총 21명 중 찬성 10, 반대 0, 기권 11</h3>
+              </md-card-header>
+            </md-card>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-yes"><b>찬성</b></h2>
+                </div>
+                <h3 class="gap-closer">총 21명 중 찬성 13, 반대 8, 기권 0</h3>
+              </md-card-header>
+            </md-card>
+          </md-card-content>
+        </md-card>
+      </md-layout>
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+    </md-layout>
+    <md-layout md-row class="layout-room">
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="80" md-flex-large="70" md-flex-xlarge="70">
+        <md-layout md-column-xsmall md-column-small md-row-medium md-row-large md-row-xlarge>
+          <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="50" md-flex-large="50" md-flex-xlarge="50" class="layout-user">
+          <md-card md-with-hover class="card-userview">
+            <md-card-header>
+              <div class="card-header-flex">
+                  <h1>유저 목록</h1>
+                  <div class="button-with-h1">
+                    <md-button class="md-raised md-primary">
+                      <md-icon class="button-icon">add</md-icon>&nbsp;유저 추가
+                    </md-button>
+                  </div>
+              </div>
+            </md-card-header>
+            <md-card-content>
+            <md-card md-with-hover class="card-inner">
+              <md-card-header>
+                <md-input-container md-clearable>
+                  <label>이름 입력...</label>
+                  <md-input></md-input>
+                </md-input-container>
+              </md-card-header>
+            </md-card>
+            
+              <div class="card-header-flex">
+                <h2>21명 중 15명 활성화</h2>
+              </div>
+              <md-table md-sort="name" md-sort-type="asc" @select="onSelect" @sort="onSort">
+                <md-table-header>
+                  <md-table-row md-selection="true">
+                    <md-table-head md-sort-by="name">User</md-table-head>
+                    <md-table-head md-sort-by="code">UniqueCode</md-table-head>
+                    <md-table-head>delete?</md-table-head>
+                  </md-table-row>
+                </md-table-header>
+                <md-table-body>
+                  <md-table-row md-selection="true">
+                    <md-table-cell>mango</md-table-cell>
+                    <md-table-cell>bntjdkgm</md-table-cell>
+                    <md-table-cell>
+                      <md-button class="md-icon-button md-accent"><md-icon>clear</md-icon></md-button>
+                    </md-table-cell>
+                  </md-table-row>
+                  <md-table-row md-selection="true">
+                    <md-table-cell>rnango</md-table-cell>
+                    <md-table-cell>bntjdkgm</md-table-cell>
+                    <md-table-cell>
+                      <md-button class="md-icon-button md-accent"><md-icon>clear</md-icon></md-button>
+                    </md-table-cell>
+                  </md-table-row>
+                  <md-table-row md-selection="true">
+                    <md-table-cell>mango</md-table-cell>
+                    <md-table-cell>bntjdkgm</md-table-cell>
+                    <md-table-cell>
+                      <md-button class="md-icon-button md-accent"><md-icon>clear</md-icon></md-button>
+                    </md-table-cell>
+                  </md-table-row>
+                </md-table-body>
+              </md-table>
+              <!--<md-table-pagination
+                md-size="5"
+                md-total="10"
+                md-page="1"
+                md-label="Rows"
+                md-separator="of"
+                :md-page-options="[5, 10, 25, 50]"
+                @pagination="onPagination"></md-table-pagination>-->
+            </md-card-content>
+          </md-card>
+          </md-layout>
+          <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="50" md-flex-large="50" md-flex-xlarge="50" class="layout-result">
+            <md-card md-with-hover class="card-userview">
+              <md-card-header>
+                <div class="card-header-flex">
+                    <h1>이전 결과</h1>
+                </div>
+              </md-card-header>
+              <md-card-content>
+                <md-card md-with-hover class="card-inner">
+                  <md-card-header>
+                    <div class="card-header-flex">
+                        <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-no"><b>반대</b></h2>
+                    </div>
+                    <h3 class="gap-closer">총 21명 중 찬성 3, 반대 17, 기권 1</h3>
+                  </md-card-header>
+                </md-card>
+                <md-card md-with-hover class="card-inner">
+                  <md-card-header>
+                    <div class="card-header-flex">
+                        <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-none"><b>기권</b></h2>
+                    </div>
+                    <h3 class="gap-closer">총 21명 중 찬성 10, 반대 0, 기권 11</h3>
+                  </md-card-header>
+                </md-card>
+                <md-card md-with-hover class="card-inner">
+                  <md-card-header>
+                    <div class="card-header-flex">
+                        <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2><h2 class="vote-result-yes"><b>찬성</b></h2>
+                    </div>
+                    <h3 class="gap-closer">총 21명 중 찬성 13, 반대 8, 기권 0</h3>
+                  </md-card-header>
+                </md-card>
+              </md-card-content>
+            </md-card>
+          </md-layout>
+        </md-layout>    
+      </md-layout>
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+    </md-layout>
+  </div>
+  <!--
   <div class="hello mdl-layout mdl-js-layout">
     <header class="app-header mdl-layout__header mdl-layout__header--scroll">
       <div class="mdl-layout__header-row">
-        <!-- Title -->
         <span class="mdl-layout-title">ADMIT.IO > SPARCS 2017 Summer 정기총회</span>
-        <!-- Add spacer, to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
-        <!-- Navigation -->
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="">방 코드 복사</a>
           <a class="mdl-navigation__link" href="">나가기</a>
         </nav>
       </div>
     </header>
-    <!--
-    <div class="mdl-layout__drawer">
-      <span class="mdl-layout-title">Title</span>
-      <nav class="mdl-navigation">
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-      </nav>
-    </div>-->
     <main class="mdl-layout__content">
       <div class="grid-vertical mdl-grid">
         <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
@@ -79,7 +270,6 @@
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
-              <!--"vote-result-no"-->
               <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>???</b></h4>
             </div>
             <h5>(21명 중 17명 투표)</h5>
@@ -87,7 +277,6 @@
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
-              <!--"vote-result-no"-->
               <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
             </div>
             <h5>(21명 중 17명 찬성, 3명 반대, 1명 기권)</h5>
@@ -161,54 +350,28 @@
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
-              <!--"vote-result-no"-->
               <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-no"><b>반대&nbsp;</b></h4>
             </div>
             <h5>(21명 중 3명 찬성, 17명 반대, 1명 기권)</h5>
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
-              <!--"vote-result-no"-->
               <h4><b>고지훈 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
             </div>
             <h5>(21명 중 21명 찬성, 0명 반대, 0명 기권)</h5>
           </div>
           <div class="add-vote">
             <div class="vote-result-header">
-              <!--"vote-result-no"-->
               <h4><b>고심 끝에 스팍스를 해체한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>무효</b></h4>
             </div>
             <h5>(21명 중 0명 찬성, 0명 반대, 21명 기권)</h5>
           </div>
-          <!--
-          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-            <thead>
-              <tr>
-                <th class="mdl-data-table__cell--non-numeric">내용</th>
-                <th class="mdl-data-table__cell--non-numeric">결과</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric"><a href="">이승민 회원 제명안</a></td>
-                <td class="mdl-data-table__cell--non-numeric">찬성</td>
-              </tr>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric"><a href="">이승민 회원 제명안</a></td>
-                <td class="mdl-data-table__cell--non-numeric">찬성</td>
-              </tr>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric"><a href="">이승민 회원 제명안</a></td>
-                <td class="mdl-data-table__cell--non-numeric">찬성</td>
-              </tr>
-            </tbody>
-          </table>
-          -->
         </div>
         <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
       </div>
     </main>
   </div>
+  -->
 </template>
 
 <script>
@@ -224,13 +387,70 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .main{
+    text-align: left;
+    min-height: 100vh;
+    background-color: #757de8;
+  }
+  .layout-task, .layout-user, .layout-result{
+    padding: 10px;
+    margin-top: 20px;
+  }
+  .md-card{
+    width: 100%;
+  }
+  @media (max-width: 944px){
+    .md-flex-small-100 {
+      min-width: 100%;
+    }
+    .header-title{
+      visibility: hidden;
+    }
+  }
+  @media (max-width: 600px){
+    .md-column-xsmall {
+      flex-direction: row;
+    }
+    .header-title{
+      visibility: hidden;
+    }
+  }
+  .card-header-flex{
+    display: flex;
+    align-items: center;
+  }
+  .button-with-h1{
+    margin-left: 10px;
+  }
+  .button-icon{
+    margin-top: -2px;
+    margin-left: -5px;
+  }
+  .card-inner{
+    background-color: #DDDDDD!important;
+    margin-bottom: 10px;
+  }
+  .vote-result-yes{
+    color: #00AA00;
+    min-width: 60px;
+  }
+  .vote-result-no{
+    color: #FF0000;
+    min-width: 60px;
+  }
+  .vote-result-none{
+    color: #777777;
+    min-width: 60px;
+  }
+  .gap-closer{
+    margin-top: -10px;
+  }
+  /*
   .hello {
     background: #757de8;
     color: white;
   }
   header {
-    /* This background is dark, so we set text to white. Use 87% black instead if
-       your background is light. */
     color: white;
   }
   .cell-userlist, .cell-task, .cell-showing{
@@ -272,13 +492,6 @@
   .label-attributes-q{
       margin-top: 4px;
   }
-  /*
-  .mdl-textfield{
-    padding: 0px;
-    margin-top: -5px;
-    width: 100%;
-  }
-  */
   .mdl-radio{
     margin-top: -2px;
   }
@@ -334,4 +547,5 @@
       width: calc(100% - 20px);
     }
   }
+  */
 </style>
