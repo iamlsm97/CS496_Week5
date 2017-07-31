@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="main">
     <md-toolbar class="md-transparent">
       <h1 class="md-title">ADMIT.IO</h1>
     </md-toolbar>
@@ -106,7 +106,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .hello {
+  .main {
     background: #3F51b5;
     height: 100vh;
   }
@@ -131,7 +131,7 @@
     background-color: white;
   }
   @media (max-height: 400px){
-    .hello{
+    .main{
       height: 410px;
     }
     .layout-create, .layout-join{
@@ -144,7 +144,7 @@
       flex-direction: column;
     }
     @media (max-height: 660px){
-      .hello{
+      .main{
         height: 660px;
       }
     }
