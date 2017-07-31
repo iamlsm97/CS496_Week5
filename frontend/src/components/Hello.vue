@@ -1,10 +1,48 @@
 <template>
-  <div class="hello mdl-layout mdl-js-layout">
-    <header class="mdl-layout__header mdl-layout__header--transparent">
-      <div class="mdl-layout__header-row">
-        <span class="mdl-layout-title">ADMIT.IO</span>
-      </div>
-    </header>
+  <div class="hello">
+    <md-toolbar class="md-transparent">
+      <h1 class="md-title">ADMIT.IO</h1>
+    </md-toolbar>
+    <md-layout     md-column-xsmall     md-column-small     md-row-medium       md-row-large       md-row-xlarge >
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="15" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="35" md-flex-large="35" md-flex-xlarge="35" class="layout-create">
+        <md-card md-with-hover class="card-create">
+            <md-card-header>
+              <router-link tag="div" to="/create" class="md-title">Create Room</a></router-link>
+              <div class="md-subhead">Or Enter Room Code</div>
+              <md-card-contents>
+                <md-input-container md-clearable>
+                  <label>Existing Room Code</label>
+                  <md-input></md-input>
+                </md-input-container>
+              </md-card-contents>
+              <md-card-actions>
+                <md-button>Enter Room Code</md-button>
+              </md-card-actions>
+            </md-card-header>
+        </md-card>
+      </md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="35" md-flex-large="35" md-flex-xlarge="35" class="layout-create">
+        <md-card md-with-hover class="card-join">
+          <md-card-header>
+            <div class="md-title">Join Room</div>
+            <div class="md-subhead">Enter User Code</div>
+            <md-card-contents>
+              <md-input-container md-clearable>
+                <label>User Code</label>
+                <md-input></md-input>
+              </md-input-container>
+            </md-card-contents>
+            <md-card-actions>
+              <md-button>Enter User Code</md-button>
+            </md-card-actions>
+          </md-card-header>
+        </md-card>
+      </md-layout>
+      <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="15" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+    </md-layout>
+  </div>
+  <!--<div class="hello mdl-layout mdl-js-layout">
     <main class="mdl-layout__content">
       <div class="grid-vertical mdl-grid">
         <div class="mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
@@ -52,7 +90,7 @@
         <div class="mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
       </div>
     </main>
-  </div>
+  </div>-->
 </template>
 
 <script>
@@ -70,19 +108,49 @@
 <style scoped>
   .hello {
     background: #3F51b5;
+    height: 100vh;
+  }
+  .md-toolbar{
+    height: 64px;
+  }
+  h1.md-title{
     color: white;
   }
-  header {
-    /* This background is dark, so we set text to white. Use 87% black instead if
-       your background is light. */
-    color: white;
+  div.md-title, div.md-subhead{
+    text-align: left;
   }
-  .card-joinroom, .card-makeroom{
+  .layout-create, .layout-join{
+    padding: 10px;
+    height: 250px;
+    margin-top: calc(50vh - 207px);
+    margin-bottom: calc(50vh - 157px);
+  }
+  .card-create, .card-join{
+    height: 100%;
     width: 100%;
+    background-color: white;
   }
-  @media (min-width: 840px){
-    .grid-vertical{
-      margin-top: 10%;
+  @media (max-height: 400px){
+    .hello{
+      height: 410px;
+    }
+    .layout-create, .layout-join{
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+  }
+  @media (max-width: 944px){
+    .md-column-small {
+      flex-direction: column;
+    }
+    @media (max-height: 660px){
+      .hello{
+        height: 660px;
+      }
+    }
+    .layout-create, .layout-join{
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
   }
 </style>

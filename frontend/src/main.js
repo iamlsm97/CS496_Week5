@@ -5,10 +5,13 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import socketio from 'socket.io-client';
 import VueSocketio from 'vue-socket.io';
+import VueMaterial from 'vue-material';
 import App from './App.vue';
 import router from './router';
 import store from './store'; // vuex store instance
 
+
+Vue.use(VueMaterial);
 Vue.use(VueAxios, axios);
 Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
 
