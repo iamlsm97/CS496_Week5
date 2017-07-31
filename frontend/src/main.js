@@ -9,9 +9,10 @@ import VueMaterial from 'vue-material';
 import App from './App.vue';
 import router from './router';
 import store from './store'; // vuex store instance
-
+// import pdf from 'vue-pdf';
 
 Vue.use(VueMaterial);
+// Vue.use(pdf);
 Vue.use(VueAxios, axios);
 Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
 

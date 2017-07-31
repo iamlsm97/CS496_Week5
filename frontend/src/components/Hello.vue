@@ -42,55 +42,6 @@
       <md-layout md-hide-xsmall       md-hide-small       md-flex-medium="15" md-flex-large="15" md-flex-xlarge="15"></md-layout>
     </md-layout>
   </div>
-  <!--<div class="hello mdl-layout mdl-js-layout">
-    <main class="mdl-layout__content">
-      <div class="grid-vertical mdl-grid">
-        <div class="mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
-        <div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--3-phone">
-          <div class="card-makeroom mdl-card mdl-shadow--2dp">
-            <div class="mdl-card__title mdl-card--expand">
-              <h2 class="mdl-card__title-text">Create Room</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
-              <div>You can create room or input code for existing room you created before.</div>
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="sample3">
-                <label class="mdl-textfield__label" for="sample3">Code</label>
-              </div> 
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/create">
-                Create New Room
-              </a>
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                Enter Input Code
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--3-phone">
-          <div class="card-joinroom mdl-card mdl-shadow--2dp">
-            <div class="mdl-card__title mdl-card--expand">
-              <h2 class="mdl-card__title-text">Join Room</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
-              <div>Input code for existing room you wanna join.</div>
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="sample3">
-                <label class="mdl-textfield__label" for="sample3">Code</label>
-              </div>  
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                Join Room
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
-      </div>
-    </main>
-  </div>-->
 </template>
 
 <script>
