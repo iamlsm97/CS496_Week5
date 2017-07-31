@@ -38,5 +38,6 @@ module.exports = {
     'no-param-reassign': ['error', { 'props': false }],
     'jsx-a11y/no-hash-href': 'off',
     'no-console': 0,
+    'linebreak-style': 'off',
   },
 };
