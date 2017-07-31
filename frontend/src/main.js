@@ -14,8 +14,8 @@ import store from './store'; // vuex store instance
 Vue.use(VueMaterial);
 // Vue.use(pdf);
 Vue.use(VueAxios, axios);
-// Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
-Vue.use(VueSocketio, socketio('http://localhost:3000'), store);
+Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
+// Vue.use(VueSocketio, socketio('http://localhost:3000'), store);
 
 
 Vue.config.productionTip = false;

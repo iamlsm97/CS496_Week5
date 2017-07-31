@@ -255,7 +255,7 @@ io.on('connection', (socket) => {
       }
     }else{
       console.log('User not found');
-      socket.emit('verifyRoomFailed');
+      socket.emit('verifyUserFailed');
     }
   });
   socket.on('createUser', (roomId, userName) => {
