@@ -225,20 +225,24 @@ io.on('connection', (socket) => {
   });
 
   socket.on('verifyRoom', (roomCode) => {
-    jwt.verify(base64url.decode(roomCode), secret_key, function (err, decoded) {
-      if (err) {
-        console.log('token verify failed!');
-        socket.emit('verifyRoomFailed');
-      } else {
-        if (roomCode in roomList) {
-          // console.log(roomList[roomCode]);
-          socket.emit('verifyRoomSuccess', {room: roomList[roomCode]});
-        } else {
-          console.log('Room not found');
+    try{
+      jwt.verify(base64url.decode(roomCode), secret_key, function (err, decoded) {
+        if (err) {
+          console.log('token verify failed!');
           socket.emit('verifyRoomFailed');
+        } else {
+          if (roomCode in roomList) {
+            // console.log(roomList[roomCode]);
+            socket.emit('verifyRoomSuccess', {room: roomList[roomCode]});
+          } else {
+            console.log('Room not found');
+            socket.emit('verifyRoomFailed');
+          }
         }
-      }
-    });
+      });
+    }catch(err){
+      socket.emit('verifyRoomFailed');
+    }
   });
 
   socket.on('verifyUser', (userCode) => {
