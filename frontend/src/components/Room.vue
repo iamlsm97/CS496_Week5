@@ -1,50 +1,51 @@
 <template>
   <div class="main">
     <md-toolbar>
-      <h1 class="md-title header-title" style="flex: 1;">SPARCS 정기총회</h1>
-      <md-button>유저 코드 복사</md-button>
+      <h1 class="md-title header-title" style="flex: 1;">{{roomTitle}}</h1>
       <router-link tag="md-button" to="/">나가기</router-link>
     </md-toolbar>
     <md-layout md-row class="layout-room">
-      <md-layout md-hide-xsmall md-hide-small md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
-      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="80" md-flex-large="70" md-flex-xlarge="70"
+      <md-layout md-hide-xsmall md-hide-small md-flex-medium="5" md-flex-large="10" md-flex-xlarge="15"></md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="90" md-flex-large="80" md-flex-xlarge="70"
                  class="layout-task">
         <md-card md-with-hover class="card-userview">
           <md-card-header>
             <div class="card-header-flex">
-              <h1>현재 작업</h1>
-              <div class="button-with-h1">
-                <md-button class="md-raised md-primary">
-                  <md-icon class="button-icon">done</md-icon>&nbsp;링크 변경
-                </md-button>
-              </div>
-              <div class="button-with-h1">
-                <md-button class="md-raised md-primary" @click="onClickAddVote">
-                  <md-icon class="button-icon">add</md-icon>&nbsp;질문 추가
-                </md-button>
+              <h1 style="flex: 1;">현재 작업</h1>
+              <div class="card-header-flex-buttons">
+                <div class="button-with-h1">
+                  <md-button class="md-raised md-primary button-between-button" @click="changeUrlLink">
+                    <md-icon class="button-icon">done</md-icon>&nbsp;링크 변경
+                  </md-button>
+                </div>
+                <div class="button-with-h1">
+                  <md-button class="md-raised md-primary">
+                    <md-icon class="button-icon" @click="onClickAddVote">add</md-icon>&nbsp;질문 추가
+                  </md-button>
+                </div>
               </div>
             </div>
           </md-card-header>
           <md-card-content>
             <div class="card-header-flex">
-              <h2 style="min-width: 100px">현재 링크</h2>
+              <h3 class="h3-left-text">현재 링크</h3>
               <md-input-container md-clearable>
                 <label>PDF URL...</label>
-                <md-input v-model="initialValue"></md-input>
+                <md-input v-model="currentUrl"></md-input>
               </md-input-container>
             </div>
             <md-card md-with-hover class="card-inner" v-if="extendAddVote">
               <md-card-header>
                 <div class="card-header-flex">
-                  <h2>질문 추가 (찬성/반대)</h2>
+                  <h3 class="h3-left-text">질문 추가 (찬성/반대)</h3>
                 </div>
               </md-card-header>
               <md-card-content>
                 <div class="card-header-flex">
-                  <h2 style="min-width: 100px">질문</h2>
+                  <h3 class="h3-left-text" style="min-width: 110px!important;">질문</h3>
                   <md-input-container md-clearable>
                     <label>질문</label>
-                    <md-input v-model="newVoteName"></md-input>
+                    <md-input></md-input>
                   </md-input-container>
                 </div>
                 <div class="card-header-flex">
@@ -61,7 +62,9 @@
                 <div class="card-header-flex">
                   <h2>{{currentVote.name}}&nbsp;&nbsp;</h2>
                   <h2 class="vote-result-none"><b>진행 중</b></h2>
-                  <md-button class="md-raised md-accent" @click="finishOnVote" v-loading.fullscreen="finishVoteLoading">투표 종료</md-button>
+                  <md-button class="md-raised md-accent" @click="finishOnVote" v-loading.fullscreen="finishVoteLoading">
+                    투표 종료
+                  </md-button>
                 </div>
                 <h3 class="gap-closer">현재 {{currentVote.total}}명 중 {{currentVote.now}}명 투표</h3>
               </md-card-header>
@@ -70,7 +73,7 @@
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>오늘은 야식을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <h2 class="vote-result-none"><b>진행 중</b></h2>
+                  <h3 class="vote-result-none"><b>진행 중</b></h3>
                 </div>
                 <h3 class="gap-closer">현재 21명 중 17명 투표</h3>
               </md-card-header>
@@ -79,37 +82,52 @@
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <h2 class="vote-result-no"><b>반대</b></h2>
+                  <div style="min-width: 80px; width: 80px;">
+                    <h3 class="vote-result-no"><b>반대</b></h3>
+                  </div>
                 </div>
-                <h3 class="gap-closer">총 21명 중 찬성 3, 반대 17, 기권 1</h3>
+                <div class="vote-information-h3">
+                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                </div>
               </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <h2 class="vote-result-none"><b>기권</b></h2>
+                  <div style="min-width: 80px; width: 80px;">
+                    <h3 class="vote-result-none"><b>무효</b></h3>
+                  </div>
                 </div>
-                <h3 class="gap-closer">총 21명 중 찬성 10, 반대 0, 기권 11</h3>
+                <div class="vote-information-h3">
+                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                </div>
               </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <h2 class="vote-result-yes"><b>찬성</b></h2>
+                  <div style="min-width: 80px; width: 80px;">
+                    <h3 class="vote-result-yes"><b>찬성</b></h3>
+                  </div>
                 </div>
-                <h3 class="gap-closer">총 21명 중 찬성 13, 반대 8, 기권 0</h3>
+                <div class="vote-information-h3">
+                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                </div>
               </md-card-header>
             </md-card>
           </md-card-content>
         </md-card>
       </md-layout>
-      <md-layout md-hide-xsmall md-hide-small md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+      <md-layout md-hide-xsmall md-hide-small md-flex-medium="5" md-flex-large="10" md-flex-xlarge="15"></md-layout>
     </md-layout>
     <md-layout md-row class="layout-room">
-      <md-layout md-hide-xsmall md-hide-small md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
-      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="80" md-flex-large="70" md-flex-xlarge="70">
+      <md-layout md-hide-xsmall md-hide-small md-flex-medium="5" md-flex-large="10" md-flex-xlarge="15"></md-layout>
+      <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="90" md-flex-large="80" md-flex-xlarge="70">
         <md-layout md-column-xsmall md-column-small md-row-medium md-row-large md-row-xlarge>
           <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="50" md-flex-large="50" md-flex-xlarge="50"
                      class="layout-user">
@@ -146,22 +164,29 @@
                 <div class="card-header-flex">
                   <h2>{{userCount}}명 중 {{activeUserCount}}명 활성화</h2>
                 </div>
-                <md-table md-sort="name" md-sort-type="asc" @select="onSelectRow">
+                <md-table>
                   <md-table-header>
-                    <md-table-row md-selection="true">
-                      <md-table-head md-sort-by="name">User</md-table-head>
-                      <md-table-head md-sort-by="code">UniqueCode</md-table-head>
+                    <md-table-row>
+                      <md-table-head>User</md-table-head>
+                      <md-table-head>UniqueCode</md-table-head>
+                      <md-table-head>active?</md-table-head>
                       <md-table-head>delete?</md-table-head>
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
                     <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex"
-                                  :md-item="{ key: rowIndex, info: row }" md-selection>
+                                  :md-item="{ key: rowIndex, info: row }">
                       <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex">
                         {{column}}
                       </md-table-cell>
                       <md-table-cell>
-                        <md-button class="md-icon-button md-accent" @click="() => { onDeleteUser(rowIndex);}">
+                        <md-button class="md-icon-button md-accent" @click="() =>{ onChangeRoleUser(rowIndex); }">
+                          <md-icon v-if="userStatus[rowIndex] === 0">favorite_border</md-icon>
+                          <md-icon v-else>favorite</md-icon>
+                        </md-button>
+                      </md-table-cell>
+                      <md-table-cell>
+                        <md-button class="md-icon-button md-accent" @click="() =>{ onDeleteUser(rowIndex); }">
                           <md-icon>clear</md-icon>
                         </md-button>
                       </md-table-cell>
@@ -184,27 +209,42 @@
                   <md-card-header>
                     <div class="card-header-flex">
                       <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2>
-                      <h2 class="vote-result-no"><b>반대</b></h2>
+                      <div style="min-width: 80px; width: 80px;">
+                        <h3 class="vote-result-no"><b>반대</b></h3>
+                      </div>
                     </div>
-                    <h3 class="gap-closer">총 21명 중 찬성 3, 반대 17, 기권 1</h3>
+                    <div class="vote-information-h3">
+                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                    </div>
                   </md-card-header>
                 </md-card>
                 <md-card md-with-hover class="card-inner">
                   <md-card-header>
                     <div class="card-header-flex">
                       <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2>
-                      <h2 class="vote-result-none"><b>기권</b></h2>
+                      <div style="min-width: 80px; width: 80px;">
+                        <h3 class="vote-result-none"><b>무효</b></h3>
+                      </div>
                     </div>
-                    <h3 class="gap-closer">총 21명 중 찬성 10, 반대 0, 기권 11</h3>
+                    <div class="vote-information-h3">
+                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                    </div>
                   </md-card-header>
                 </md-card>
                 <md-card md-with-hover class="card-inner">
                   <md-card-header>
                     <div class="card-header-flex">
                       <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2>
-                      <h2 class="vote-result-yes"><b>찬성</b></h2>
+                      <div style="min-width: 80px; width: 80px;">
+                        <h3 class="vote-result-yes"><b>찬성</b></h3>
+                      </div>
                     </div>
-                    <h3 class="gap-closer">총 21명 중 찬성 13, 반대 8, 기권 0</h3>
+                    <div class="vote-information-h3">
+                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
+                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                    </div>
                   </md-card-header>
                 </md-card>
               </md-card-content>
@@ -212,7 +252,7 @@
           </md-layout>
         </md-layout>
       </md-layout>
-      <md-layout md-hide-xsmall md-hide-small md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
+      <md-layout md-hide-xsmall md-hide-small md-flex-medium="5" md-flex-large="10" md-flex-xlarge="15"></md-layout>
     </md-layout>
   </div>
 </template>
@@ -234,6 +274,9 @@
         currentVote: {},
         pastVote: [],
         finishVoteLoading: false,
+
+        currentUrl: this.currentUrl,
+        roomTitle: this.roomTitle,
       };
     },
     beforeCreate () {
@@ -243,6 +286,9 @@
       this.userStatus = [];
       this.activeUserCount = 0;
       this.userCount = 0;
+      this.isFirst = true;
+      this.currentUrl = '';
+      this.roomTitle = '';
       this.$socket.emit('verifyRoom', this.$route.params.roomId);
     },
     sockets: {
@@ -252,14 +298,20 @@
         this.userStatus = [];
         this.activeUserCount = 0;
         this.userCount = this.roomInfo.user.length;
+        if (this.isFirst) {
+          this.isFirst = false;
+          this.currentUrl = data.room.showUrl;
+        }
+        this.roomTitle = data.room.name;
         for (let i = 0; i < this.roomInfo.user.length; i += 1) {
           this.userList.push({ name: this.roomInfo.user[i].name, code: this.roomInfo.user[i].code });
           this.userStatus.push(this.roomInfo.user[i].vote_status);
           if (this.roomInfo.user[i].vote_status > 0) this.activeUserCount += 1;
         }
+        // console.log(this.userStatus);
         setTimeout(() => {
           this.$socket.emit('verifyRoom', this.$route.params.roomId);
-        }, 1000);
+        }, 100);
       },
       verifyRoomFailed () {
         this.$router.push('/');
@@ -330,6 +382,7 @@
           message: 'Failed to add user',
           type: 'error',
         });
+        console.log('failed to add user');
       },
     },
     methods: {
@@ -356,6 +409,7 @@
         });
       },
       onClickAddUser () {
+        console.log(this.$route.params.roomId);
         this.extendAddUser = !this.extendAddUser;
       },
       onClickAddUserConfirm () {
@@ -371,11 +425,15 @@
         this.newUserName = '';
         this.extendAddUser = !this.extendAddUser;
       },
-      onSelectRow (data) {
-        console.log(data);
+      onChangeRoleUser (idx) {
+        console.log('!');
+        this.$socket.emit('changeUserRole', this.$route.params.roomId, this.userList[idx].code);
       },
       onDeleteUser (idx) {
         this.$socket.emit('deleteUser', this.$route.params.roomId, this.userList[idx].code);
+      },
+      changeUrlLink () {
+        this.$socket.emit('changeLink', this.$route.params.roomId, this.currentUrl);
       },
     },
   };
@@ -423,6 +481,29 @@
     align-items: center;
   }
 
+  .card-header-flex-buttons {
+    display: flex;
+    align-items: center;
+  }
+
+  .vote-information-h3 {
+    display: flex;
+  }
+
+  @media (max-width: 600px) {
+    .card-header-flex-buttons {
+      display: block;
+    }
+
+    .button-between-button {
+      margin-bottom: 5px !important;
+    }
+
+    .vote-information-h3 {
+      display: block;
+    }
+  }
+
   .button-with-h1 {
     margin-left: 10px;
   }
@@ -439,20 +520,32 @@
 
   .vote-result-yes {
     color: #00AA00;
-    min-width: 60px;
+    text-align: right;
+    min-width: 80px;
   }
 
   .vote-result-no {
     color: #FF0000;
-    min-width: 60px;
+    text-align: right;
+    min-width: 80px;
   }
 
   .vote-result-none {
     color: #777777;
-    min-width: 60px;
+    text-align: right;
+    min-width: 80px;
   }
 
   .gap-closer {
-    margin-top: -10px;
+    margin-top: -5px;
+  }
+
+  .h3-left-text {
+    margin-top: 10px;
+    min-width: 125px;
+  }
+
+  .md-table {
+    max-width: 100% !important;
   }
 </style>
