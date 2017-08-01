@@ -162,7 +162,6 @@ class Room {
     for (let i = 0; i < this.user.length; i += 1) {
       this.voteResult.push(-1);
       if (this.user[i].vote_status > 0) {
-        wholCnt += 1;
         this.voteList.push({ name: this.user[i].name, vote: -1 });
         this.voteLeft.push(this.user[i].name);
       }
@@ -284,15 +283,19 @@ io.on('connection', (socket) => {
   socket.on('verifyUser', (userCode) => {
     if ((userCode in uniqueList) && (uniqueList[userCode].room in roomList)) {
       let found = false;
+      let isActive = false;
       const roomTarget = roomList[uniqueList[userCode].room];
       for (let i = 0; i < roomTarget.user.length; i += 1) {
         if (roomTarget.user[i].code === userCode) {
           found = true;
+          isActive = (roomTarget.user[i].vote_status === 1);
+          // console.log(isActive, roomTarget.user[i].vote_status);
           break;
         }
       }
+      // console.log(isActive);
       if (found) {
-        socket.emit('verifyUserSuccess', { room: roomTarget.getStatus(false), name: uniqueList[userCode].name });
+        socket.emit('verifyUserSuccess', { room: roomTarget.getStatus(false), name: uniqueList[userCode].name, isActive: isActive});
       } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');
@@ -418,6 +421,7 @@ io.on('connection', (socket) => {
             }
           }
           if (found) {
+            console.log('userVoteSuccess');
             socket.emit('userVoteSuccess');
           } else {
             console.log('userVoteFailed - You do not have any access');

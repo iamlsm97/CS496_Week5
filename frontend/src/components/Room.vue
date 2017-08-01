@@ -70,6 +70,7 @@
                   </md-button>
                 </div>
                 <h3 class="gap-closer">현재 {{currentVote.total}}명 중 {{currentVote.now}}명 투표</h3>
+                <h3 class="gap-closer">left: {{voteLeftStr}}</h3>
               </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
@@ -278,6 +279,7 @@
         currentVote: this.currentVote,
         pastVote: [],
         finishVoteLoading: false,
+        voteLeft: this.voteLeft,
 
         currentUrl: this.currentUrl,
         roomTitle: this.roomTitle,
@@ -296,6 +298,7 @@
       this.onVote = 0;
       this.voteQuestion = '';
       this.currentVote = { now: -1, total: -1 };
+      this.voteLeft = [];
       this.$socket.emit('verifyRoom', this.$route.params.roomId);
     },
     sockets: {
@@ -312,6 +315,7 @@
           this.newVoteName = '';
         } else {
           this.currentVote = { now: -1, total: -1 };
+          this.voteLeft = [];
         }
         if (this.isFirst) {
           this.isFirst = false;
@@ -356,6 +360,8 @@
       },
       realTimeCurrentVote (data) {
         this.currentVote = { now: data.currentVote.now, total: data.currentVote.total };
+        this.voteLeft = data.voteLeft;
+        // console.log(this.voteLeft);
       },
       finishOnVoteSuccess () {
         // pastVote에 추가
@@ -392,11 +398,39 @@
         console.log('failed to add user');
       },
     },
+    computed: {
+      voteLeftStr () {
+        // console.log(this.voteLeft);
+        let retStr = '';
+        for (let i = 0; i < this.voteLeft.length; i += 1) {
+          if (i === 0) retStr = this.voteLeft[0];
+          else {
+            retStr += ', ';
+            retStr += this.voteLeft[i];
+          }
+        }
+        return retStr;
+      },
+    },
     methods: {
       onClickAddVote () {
         console.log('!!!');
         this.extendAddVote = !this.extendAddVote;
       },
+      /*
+      voteLeftStr2 () {
+        // console.log(this.voteLeft);
+        let retStr = '';
+        for (let i = 0; i < this.voteLeft.length; i += 1) {
+          if (i === 0) retStr = this.voteLeft[0];
+          else {
+            retStr += ', ';
+            retStr += this.voteLeft[i];
+          }
+        }
+        // console.log(retStr);
+        return retStr;
+      }, */
       onClickAddVoteConfirm () {
         if (this.newVoteName !== '') {
           console.log(this.$route.params.roomId);
