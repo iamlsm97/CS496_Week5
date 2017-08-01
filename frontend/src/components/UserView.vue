@@ -45,6 +45,21 @@
                 </md-button>
               </center>
             </div>
+            <div class="readable" :class="{hideview: (onVote !== 2)}">
+              <center>
+                <h1>{{ question }}</h1>
+                <h3 v-if="pastResult.result==='agree'" class="vote-result-yes"><b>찬성</b></h3>
+                <h3 v-else-if="pastResult.result==='none'" class="vote-result-none"><b>무효</b></h3>
+                <h3 v-else class="vote-result-no"><b>반대</b></h3>
+                <br>
+                <div class="vote-information-h3">
+                  <div class="h3-to-middle"></div>
+                  <h3 class="gap-closer">총 {{pastResult.total}}명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 {{pastResult.agree}}, 반대 {{pastResult.disagree}}, 기권 {{pastResult.none}}</h3>
+                  <div class="h3-to-middle"></div>
+                </div>
+              </center>
+            </div>
           </md-card-content>
       </md-card>
     </md-layout>
@@ -63,6 +78,7 @@
         question: this.question,
         userChoice: this.userChoice,
         isActive: this.isActive,
+        pastResult: this.pastResult,
       };
     },
     beforeCreate () {
@@ -70,6 +86,14 @@
       this.userChoice = 0;
       this.isActive = false;
       this.showUrl = 'about:blank;';
+      this.pastResult = {
+        voteQuestion: '',
+        total: 0,
+        agree: 0,
+        disagree: 0,
+        none: 0,
+        result: 'none',
+      };
       this.$socket.emit('verifyUser', this.$route.params.userId);
     },
     sockets: {
@@ -81,11 +105,24 @@
         this.onVote = data.room.voting;
         this.question = data.room.voteQuestion;
         this.isActive = data.isActive;
+        if (this.onVote < 2) {
+          this.pastResult = {
+            voteQuestion: '',
+            total: 0,
+            agree: 0,
+            disagree: 0,
+            none: 0,
+            result: 'none',
+          };
+        }
         // console.log(this.onVote);
         setTimeout(() => { this.$socket.emit('verifyUser', this.$route.params.userId); }, 100);
       },
       verifyUserFailed () {
         this.$router.push('/');
+      },
+      resultVote (data) {
+        this.pastResult = data.pastResult[0];
       },
     },
     methods: {
@@ -136,7 +173,35 @@
   .hideview{
     display: none;
   }
+  .vote-result-yes {
+    color: #00AA00;
+  }
 
+  .vote-result-no {
+    color: #FF0000;
+  }
+
+  .vote-result-none {
+    color: #777777;
+  }
+  .gap-closer {
+    margin-top: -5px;
+    text-align: center;
+  }
+  .vote-information-h3 {
+    display: flex;
+  }
+  .h3-to-middle{
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .vote-information-h3 {
+      display: block;
+    }
+    .h3-to-middle{
+      display: none;
+    }
+  }
   /*
   @media (max-width: 1024px){
     .readable{

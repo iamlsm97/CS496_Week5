@@ -73,61 +73,19 @@
                 <h3 class="gap-closer">left: {{voteLeftStr}}</h3>
               </md-card-header>
             </md-card>
-            <md-card md-with-hover class="card-inner" v-for="pastVote in pastVotes" :key="pastVote.voteQuestion">
+            <md-card md-with-hover class="card-inner" v-if="onVote === 2">
               <md-card-header>
                 <div class="card-header-flex">
-                  <h2>{{pastVote.voteQuestion}}&nbsp;&nbsp;</h2>
+                  <h2>{{pastVotes[0].voteQuestion}}&nbsp;&nbsp;</h2>
                   <div style="min-width: 80px; width: 80px;">
-                    <h3 v-if="pastVote.result==='agree'" class="vote-result-yes"><b>찬성</b></h3>
-                    <h3 v-else-if="pastVote.result==='none'" class="vote-result-none"><b>무효</b></h3>
+                    <h3 v-if="pastVotes[0].result==='agree'" class="vote-result-yes"><b>찬성</b></h3>
+                    <h3 v-else-if="pastVotes[0].result==='none'" class="vote-result-none"><b>무효</b></h3>
                     <h3 v-else class="vote-result-no"><b>반대</b></h3>
                   </div>
                 </div>
                 <div class="vote-information-h3">
-                  <h3 class="gap-closer">총 {{pastVote.total}}명 중&nbsp;</h3>
-                  <h3 class="gap-closer">찬성 {{pastVote.agree}}, 반대 {{pastVote.disagree}}, 기권 {{pastVote.none}}</h3>
-                </div>
-              </md-card-header>
-            </md-card>
-            <md-card md-with-hover class="card-inner">
-              <md-card-header>
-                <div class="card-header-flex">
-                  <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <div style="min-width: 80px; width: 80px;">
-                    <h3 class="vote-result-no"><b>반대</b></h3>
-                  </div>
-                </div>
-                <div class="vote-information-h3">
-                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
-                </div>
-              </md-card-header>
-            </md-card>
-            <md-card md-with-hover class="card-inner">
-              <md-card-header>
-                <div class="card-header-flex">
-                  <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <div style="min-width: 80px; width: 80px;">
-                    <h3 class="vote-result-none"><b>무효</b></h3>
-                  </div>
-                </div>
-                <div class="vote-information-h3">
-                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
-                </div>
-              </md-card-header>
-            </md-card>
-            <md-card md-with-hover class="card-inner">
-              <md-card-header>
-                <div class="card-header-flex">
-                  <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <div style="min-width: 80px; width: 80px;">
-                    <h3 class="vote-result-yes"><b>찬성</b></h3>
-                  </div>
-                </div>
-                <div class="vote-information-h3">
-                  <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                  <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                  <h3 class="gap-closer">총 {{pastVotes[0].total}}명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 {{pastVotes[0].agree}}, 반대 {{pastVotes[0].disagree}}, 기권 {{pastVotes[0].none}}</h3>
                 </div>
               </md-card-header>
             </md-card>
@@ -216,45 +174,19 @@
                 </div>
               </md-card-header>
               <md-card-content>
-                <md-card md-with-hover class="card-inner">
+                <md-card md-with-hover class="card-inner" v-for="pastVote in pastVotes" :key="pastVote.voteQuestion">
                   <md-card-header>
                     <div class="card-header-flex">
-                      <h2>오늘은 치킨을 먹어야 한다!&nbsp;&nbsp;</h2>
+                      <h2>{{pastVote.voteQuestion}}&nbsp;&nbsp;</h2>
                       <div style="min-width: 80px; width: 80px;">
-                        <h3 class="vote-result-no"><b>반대</b></h3>
+                        <h3 v-if="pastVote.result==='agree'" class="vote-result-yes"><b>찬성</b></h3>
+                        <h3 v-else-if="pastVote.result==='none'" class="vote-result-none"><b>무효</b></h3>
+                        <h3 v-else class="vote-result-no"><b>반대</b></h3>
                       </div>
                     </div>
                     <div class="vote-information-h3">
-                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
-                    </div>
-                  </md-card-header>
-                </md-card>
-                <md-card md-with-hover class="card-inner">
-                  <md-card-header>
-                    <div class="card-header-flex">
-                      <h2>오늘은 피자를 먹어야 한다!&nbsp;&nbsp;</h2>
-                      <div style="min-width: 80px; width: 80px;">
-                        <h3 class="vote-result-none"><b>무효</b></h3>
-                      </div>
-                    </div>
-                    <div class="vote-information-h3">
-                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
-                    </div>
-                  </md-card-header>
-                </md-card>
-                <md-card md-with-hover class="card-inner">
-                  <md-card-header>
-                    <div class="card-header-flex">
-                      <h2>오늘은 보쌈을 먹어야 한다!&nbsp;&nbsp;</h2>
-                      <div style="min-width: 80px; width: 80px;">
-                        <h3 class="vote-result-yes"><b>찬성</b></h3>
-                      </div>
-                    </div>
-                    <div class="vote-information-h3">
-                      <h3 class="gap-closer">총 21명 중&nbsp;</h3>
-                      <h3 class="gap-closer">찬성 10, 반대 0, 기권 11</h3>
+                      <h3 class="gap-closer">총 {{pastVote.total}}명 중&nbsp;</h3>
+                      <h3 class="gap-closer">찬성 {{pastVote.agree}}, 반대 {{pastVote.disagree}}, 기권 {{pastVote.none}}</h3>
                     </div>
                   </md-card-header>
                 </md-card>
@@ -373,8 +305,10 @@
           now: data.currentVote.now,
           total: data.currentVote.total,
         };
-        this.pastVotes = data.pastResult;
         this.voteLeft = data.voteLeft;
+      },
+      resultVote (data) {
+        this.pastVotes = data.pastResult;
       },
       finishOnVoteSuccess () {
         // pastVote에 추가

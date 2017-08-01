@@ -218,12 +218,11 @@ class Room {
     return {
       currentVote: this.currentVote,
       voteLeft: this.voteLeft,
-      pastResult: this.pastResult,
     };
   }
 
   getVoteResult () {
-    return { who: 'Seungmin' };
+    return { pastResult: this.pastResult };
   }
 
   finishVote () {
@@ -306,8 +305,10 @@ io.on('connection', (socket) => {
             const roomTarget = roomList[roomCode];
             // console.log(roomList[roomCode]);
             socket.emit('verifyRoomSuccess', { room: roomTarget.getStatus(true) });
-            if (roomTarget.voting === 1 || roomTarget.voting === 2) {
+            if (roomTarget.voting === 1) {
               socket.emit('realTimeCurrentVote', roomTarget.getVoteStatus());
+            } else if (roomTarget.voting === 2) {
+              socket.emit('resultVote', roomTarget.getVoteResult());
             }
           } else {
             console.log('Room not found');
@@ -336,6 +337,9 @@ io.on('connection', (socket) => {
       // console.log(isActive);
       if (found) {
         socket.emit('verifyUserSuccess', { room: roomTarget.getStatus(false), name: uniqueList[userCode].name, isActive: isActive});
+        if (roomTarget.voting === 2) {
+          socket.emit('resultVote', roomTarget.getVoteResult());
+        }
       } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');

@@ -63,7 +63,7 @@
           message: `Welcome back to ${data.room.name}`,
           type: 'success',
         });
-        this.$router.push(`/room/${data.room.token}`);
+        this.$router.push(`/room/${this.roomCode}`);
       },
       verifyRoomFailed () {
         this.$message({
