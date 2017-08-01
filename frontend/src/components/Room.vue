@@ -1,8 +1,7 @@
 <template>
   <div class="main">
     <md-toolbar>
-      <h1 class="md-title header-title" style="flex: 1;">SPARCS 정기총회</h1>
-      <md-button>유저 코드 복사</md-button>
+      <h1 class="md-title header-title" style="flex: 1;">{{roomTitle}}</h1>
       <router-link tag="md-button" to="/">나가기</router-link>
     </md-toolbar>
     <md-layout md-row class="layout-room">
@@ -14,12 +13,12 @@
             <div class="card-header-flex">
               <h1>현재 작업</h1>
               <div class="button-with-h1">
-                <md-button class="md-raised md-primary">
+                <md-button class="md-raised md-primary" @click="changeUrlLink">
                   <md-icon class="button-icon">done</md-icon>&nbsp;링크 변경
                 </md-button>
               </div>
               <div class="button-with-h1">
-                <md-button class="md-raised md-primary" @click="onClickAddVote">
+                <md-button class="md-raised md-primary">
                   <md-icon class="button-icon">add</md-icon>&nbsp;질문 추가
                 </md-button>
               </div>
@@ -30,10 +29,10 @@
               <h2 style="min-width: 100px">현재 링크</h2>
               <md-input-container md-clearable>
                 <label>PDF URL...</label>
-                <md-input v-model="initialValue"></md-input>
+                <md-input v-model="currentUrl"></md-input>
               </md-input-container>
             </div>
-            <md-card md-with-hover class="card-inner" v-if="extendAddVote">
+            <md-card md-with-hover class="card-inner">
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>질문 추가 (찬성/반대)</h2>
@@ -44,15 +43,13 @@
                   <h2 style="min-width: 100px">질문</h2>
                   <md-input-container md-clearable>
                     <label>질문</label>
-                    <md-input v-model="newVoteName"></md-input>
+                    <md-input></md-input>
                   </md-input-container>
                 </div>
                 <div class="card-header-flex">
                   <div style="flex: 1;"></div>
-                  <md-button class="md-raised md-primary btn" :class="{disabled: (newVoteName === '')}"
-                             @click="onClickAddVoteConfirm">등록
-                  </md-button>
-                  <md-button class="md-raised md-accent" @click="onClickAddVoteCancel">취소</md-button>
+                  <md-button class="md-raised md-primary">등록</md-button>
+                  <md-button class="md-raised md-accent">취소</md-button>
                 </div>
               </md-card-content>
             </md-card>
@@ -138,20 +135,26 @@
                 </div>
                 <md-table md-sort="name" md-sort-type="asc" @select="onSelectRow">
                   <md-table-header>
-                    <md-table-row md-selection="true">
+                    <md-table-row>
                       <md-table-head md-sort-by="name">User</md-table-head>
                       <md-table-head md-sort-by="code">UniqueCode</md-table-head>
+                      <md-table-head>active?</md-table-head>
                       <md-table-head>delete?</md-table-head>
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
-                    <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex"
-                                  :md-item="{ key: rowIndex, info: row }" md-selection>
+                    <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex" :md-item="{ key: rowIndex, info: row }">
                       <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex">
                         {{column}}
                       </md-table-cell>
                       <md-table-cell>
-                        <md-button class="md-icon-button md-accent" @click="() => { onDeleteUser(rowIndex);}">
+                        <md-button class="md-icon-button md-accent" @click="() =>{ onChangeRoleUser(rowIndex); }">
+                          <md-icon v-if="userStatus[rowIndex] === 0">favorite_border</md-icon>
+                          <md-icon v-else>favorite</md-icon>
+                        </md-button>
+                      </md-table-cell>
+                      <md-table-cell>
+                        <md-button class="md-icon-button md-accent" @click="() =>{ onDeleteUser(rowIndex); }">
                           <md-icon>clear</md-icon>
                         </md-button>
                       </md-table-cell>
@@ -219,6 +222,8 @@
         userList: this.userList,
         userStatus: this.userStatus,
         userCountText: this.userCountText,
+        currentUrl: this.currentUrl,
+        roomTitle: this.roomTitle,
       };
     },
     beforeCreate () {
@@ -228,6 +233,9 @@
       this.userStatus = [];
       this.activeUserCount = 0;
       this.userCount = 0;
+      this.isFirst = true;
+      this.currentUrl = '';
+      this.roomTitle = '';
       this.$socket.emit('verifyRoom', this.$route.params.roomId);
     },
     sockets: {
@@ -237,14 +245,18 @@
         this.userStatus = [];
         this.activeUserCount = 0;
         this.userCount = this.roomInfo.user.length;
+        if (this.isFirst) {
+          this.isFirst = false;
+          this.currentUrl = data.room.showUrl;
+        }
+        this.roomTitle = data.room.name;
         for (let i = 0; i < this.roomInfo.user.length; i += 1) {
           this.userList.push({ name: this.roomInfo.user[i].name, code: this.roomInfo.user[i].code });
           this.userStatus.push(this.roomInfo.user[i].vote_status);
           if (this.roomInfo.user[i].vote_status > 0) this.activeUserCount += 1;
         }
-        setTimeout(() => {
-          this.$socket.emit('verifyRoom', this.$route.params.roomId);
-        }, 1000);
+        // console.log(this.userStatus);
+        setTimeout(() => { this.$socket.emit('verifyRoom', this.$route.params.roomId); }, 100);
       },
       verifyRoomFailed () {
         this.$router.push('/');
@@ -265,6 +277,7 @@
           message: 'Failed to add user',
           type: 'error',
         });
+        console.log('failed to add user');
       },
     },
     methods: {
@@ -287,8 +300,9 @@
       onClickAddVoteCancel () {
         this.newVoteName = '';
         this.extendAddVote = !this.extendAddVote;
-      },
+      }
       onClickAddUser () {
+        console.log(this.$route.params.roomId);
         this.extendAddUser = !this.extendAddUser;
       },
       onClickAddUserConfirm () {
@@ -304,11 +318,15 @@
         this.newUserName = '';
         this.extendAddUser = !this.extendAddUser;
       },
-      onSelectRow (data) {
-        console.log(data);
+      onChangeRoleUser (idx) {
+        console.log('!');
+        this.$socket.emit('changeUserRole', this.$route.params.roomId, this.userList[idx].code);
       },
       onDeleteUser (idx) {
         this.$socket.emit('deleteUser', this.$route.params.roomId, this.userList[idx].code);
+      },
+      changeUrlLink () {
+        this.$socket.emit('changeLink', this.$route.params.roomId, this.currentUrl);
       },
     },
   };
