@@ -148,7 +148,7 @@ class Room {
     }
   }
 
-  startVote () {
+  startVote (socket) {
     this.voting = 1;
     this.voteResult = [];
     this.voteList = [];
@@ -158,17 +158,28 @@ class Room {
         this.voteList.push({ name, vote: -1 });
       }
     }
+    socket.emit('addVoteSuccess', {
+      total: this.voteList.length,
+    });
     const updateVoteStatus = setInterval(() => {
       if (!this.voting) {
         clearInterval(updateVoteStatus);
+        socket.emit('finishOnVoteSuccess');
       } else {
         const rtnList = [];
+        let voteCnt = 0;
         for (let i = 0; i < this.user.length; i += 1) {
           if (this.user[i].vote_status > 0) {
             rtnList.push({ name, vote: this.voteResult[i] });
+            if (this.voteResult[i] >= 0) {
+              voteCnt += 1;
+            }
           }
         }
         this.voteList = rtnList;
+        socket.emit('realTimeCurrentVote', {
+          now: voteCnt,
+        });
       }
     }, 200);
   }
@@ -193,10 +204,6 @@ class Room {
 io.on('connection', (socket) => {
   console.log(`-----socket connected ${socket.id}`);
 
-  socket.on('hello', () => {
-    console.log('hello vue.js ');
-  });
-
   socket.on('disconnect', () => {
     console.log(`-----socket disconnected ${socket.id}`);
   });
@@ -205,19 +212,13 @@ io.on('connection', (socket) => {
   socket.on('createRoom', (roomName) => {
     let roomId;
     const roomCode = getRandStr(8);
-    console.log(`roomcode: ${roomCode}`);
-    console.log(`secret_key: ${secret_key}`);
     jwt.sign({ roomCode }, secret_key, { expiresIn: '6h' }, (err, token) => {
       if (err) {
-        console.log(err);
-        console.log(`token: ${token}`);
-        console.log('token creation failed');
         socket.emit('creationFailed');
       } else {
         roomId = token;
         const newRoom = new Room(roomName, roomId);
         roomList[roomId] = newRoom;
-        console.log(roomList);
         socket.emit('creationSuccess', roomId);
       }
     });
@@ -230,8 +231,7 @@ io.on('connection', (socket) => {
         socket.emit('verifyRoomFailed');
       } else {
         if (roomCode in roomList) {
-          // console.log(roomList[roomCode]);
-          socket.emit('verifyRoomSuccess', {room: roomList[roomCode]});
+          socket.emit('verifyRoomSuccess', { room: roomList[roomCode] });
         } else {
           console.log('Room not found');
           socket.emit('verifyRoomFailed');
@@ -251,7 +251,7 @@ io.on('connection', (socket) => {
         }
       }
       if (found) {
-        socket.emit('verifyUserSuccess', {room: roomTarget, name: uniqueList[userCode].name});
+        socket.emit('verifyUserSuccess', { room: roomTarget, name: uniqueList[userCode].name });
       } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');
@@ -293,8 +293,8 @@ io.on('connection', (socket) => {
       socket.emit('deleteUserFailed');
     } else {
       delete uniqueList[userCode];
-      for(let i=0;i<roomTarget.user.length;i++){
-        if(roomTarget.user[i].code === userCode){
+      for (let i = 0; i < roomTarget.user.length; i += 1) {
+        if (roomTarget.user[i].code === userCode) {
           roomTarget.user.splice(i, 1);
           break;
         }
@@ -313,16 +313,16 @@ io.on('connection', (socket) => {
       socket.emit('changeUserRoleFailed');
     } else {
       let found = false;
-      for(let i=0;i<roomTarget.user.length;i++){
-        if(roomTarget.user[i].code === userCode){
+      for (let i = 0; i < roomTarget.user.length; i += 1) {
+        if (roomTarget.user[i].code === userCode) {
           roomTarget.user[i].vote_status = 1 - roomTarget.user[i].vote_status;
           found = true;
-          console.log("succcess!");
+          console.log('succcess!');
           socket.emit('changeUserRoleSuccess');
           break;
         }
       }
-      if(!found){
+      if (!found) {
         console.log('cannot find user while changeUserRole');
         socket.emit('changeUserRoleFailed');
       }
@@ -343,8 +343,21 @@ io.on('connection', (socket) => {
     const roomTarget = roomList[data.roomId];
     if (!roomTarget || data.question === '') {
       socket.emit('addVoteFailed');
+    } else if (roomTarget.voting === 1) {
+      socket.emit('addVoteFailed', {
+        message: 'This room is already on voting',
+      });
     } else {
-      roomTarget.startVote();
+      roomTarget.startVote(socket);
+    }
+  });
+
+  socket.on('finishOnVote', (data) => {
+    const roomTarget = roomList[data.roomId];
+    if (!roomTarget) {
+      socket.emit('finishOnVoteFailed');
+    } else {
+      roomTarget.finishVote();
     }
   });
 

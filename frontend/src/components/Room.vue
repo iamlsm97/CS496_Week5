@@ -50,11 +50,21 @@
                 <div class="card-header-flex">
                   <div style="flex: 1;"></div>
                   <md-button class="md-raised md-primary btn" :class="{disabled: (newVoteName === '')}"
-                             @click="onClickAddVoteConfirm">등록
+                             @click="onClickAddVoteConfirm">추가
                   </md-button>
                   <md-button class="md-raised md-accent" @click="onClickAddVoteCancel">취소</md-button>
                 </div>
               </md-card-content>
+            </md-card>
+            <md-card md-with-hover class="card-inner" v-if="onVote">
+              <md-card-header>
+                <div class="card-header-flex">
+                  <h2>{{currentVote.name}}&nbsp;&nbsp;</h2>
+                  <h2 class="vote-result-none"><b>진행 중</b></h2>
+                  <md-button class="md-raised md-accent" @click="finishOnVote" v-loading.fullscreen="finishVoteLoading">투표 종료</md-button>
+                </div>
+                <h3 class="gap-closer">현재 {{currentVote.total}}명 중 {{currentVote.now}}명 투표</h3>
+              </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
               <md-card-header>
@@ -219,6 +229,11 @@
         userList: this.userList,
         userStatus: this.userStatus,
         userCountText: this.userCountText,
+
+        onVote: false,
+        currentVote: {},
+        pastVote: [],
+        finishVoteLoading: false,
       };
     },
     beforeCreate () {
@@ -249,6 +264,56 @@
       verifyRoomFailed () {
         this.$router.push('/');
       },
+      addVoteSuccess (data) {
+        this.currentVote.name = this.newVoteName;
+        this.extendAddVote = false;
+        this.newVoteName = '';
+        this.onVote = true;
+        this.currentVote.total = data.total;
+        this.$message({
+          showClose: true,
+          message: 'Successfully added vote',
+          type: 'success',
+        });
+      },
+      addVoteFailed (data) {
+        if (data.message) {
+          this.extendAddVote = false;
+          this.newVoteName = '';
+          this.$message({
+            showClose: true,
+            message: data.message,
+            type: 'error',
+          });
+        } else {
+          this.$message({
+            showClose: true,
+            message: 'Failed to add vote',
+            type: 'error',
+          });
+        }
+      },
+      realTimeCurrentVote (data) {
+        this.currentVote.now = data.now;
+      },
+      finishOnVoteSuccess () {
+        this.onVote = false;
+        this.currentVote = {};
+        // pastVote에 추가
+        this.finishVoteLoading = false;
+        this.$message({
+          showClose: true,
+          message: 'Successfully finished vote',
+          type: 'success',
+        });
+      },
+      finishOnVoteFailed () {
+        this.$message({
+          showClose: true,
+          message: 'Failed to finish vote',
+          type: 'error',
+        });
+      },
       userAddSuccess (newCode) {
         this.$message({
           showClose: true,
@@ -274,19 +339,21 @@
       onClickAddVoteConfirm () {
         if (this.newVoteName !== '') {
           console.log(this.$route.params.roomId);
-          this.$message({
-            showClose: true,
-            message: 'tada',
-          });
           this.$socket.emit('addVote', {
             roomId: this.$route.params.roomId,
-            question: this.newUserName,
+            question: this.newVoteName,
           });
         }
       },
       onClickAddVoteCancel () {
         this.newVoteName = '';
         this.extendAddVote = !this.extendAddVote;
+      },
+      finishOnVote () {
+        this.finishVoteLoading = true;
+        this.$socket.emit('finishOnVote', {
+          roomId: this.$route.params.roomId,
+        });
       },
       onClickAddUser () {
         this.extendAddUser = !this.extendAddUser;
