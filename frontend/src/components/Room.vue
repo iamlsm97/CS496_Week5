@@ -19,7 +19,7 @@
                 </md-button>
               </div>
               <div class="button-with-h1">
-                <md-button class="md-raised md-primary">
+                <md-button class="md-raised md-primary" @click="onClickAddVote">
                   <md-icon class="button-icon">add</md-icon>&nbsp;질문 추가
                 </md-button>
               </div>
@@ -33,7 +33,7 @@
                 <md-input v-model="initialValue"></md-input>
               </md-input-container>
             </div>
-            <md-card md-with-hover class="card-inner">
+            <md-card md-with-hover class="card-inner" v-if="extendAddVote">
               <md-card-header>
                 <div class="card-header-flex">
                   <h2>질문 추가 (찬성/반대)</h2>
@@ -44,13 +44,15 @@
                   <h2 style="min-width: 100px">질문</h2>
                   <md-input-container md-clearable>
                     <label>질문</label>
-                    <md-input></md-input>
+                    <md-input v-model="newVoteName"></md-input>
                   </md-input-container>
                 </div>
                 <div class="card-header-flex">
                   <div style="flex: 1;"></div>
-                  <md-button class="md-raised md-primary">등록</md-button>
-                  <md-button class="md-raised md-accent">취소</md-button>
+                  <md-button class="md-raised md-primary btn" :class="{disabled: (newVoteName === '')}"
+                             @click="onClickAddVoteConfirm">등록
+                  </md-button>
+                  <md-button class="md-raised md-accent" @click="onClickAddVoteCancel">취소</md-button>
                 </div>
               </md-card-content>
             </md-card>
@@ -143,12 +145,13 @@
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
-                    <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex" :md-item="{ key: rowIndex, info: row }" md-selection>
+                    <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex"
+                                  :md-item="{ key: rowIndex, info: row }" md-selection>
                       <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex">
                         {{column}}
                       </md-table-cell>
                       <md-table-cell>
-                        <md-button class="md-icon-button md-accent" @click="() =>{ onDeleteUser(rowIndex); }">
+                        <md-button class="md-icon-button md-accent" @click="() => { onDeleteUser(rowIndex);}">
                           <md-icon>clear</md-icon>
                         </md-button>
                       </md-table-cell>
@@ -208,7 +211,9 @@
   export default {
     data () {
       return {
+        extendAddVote: false,
         extendAddUser: false,
+        newVoteName: '',
         newUserName: '',
         roomInfo: this.roomInfo,
         userList: this.userList,
@@ -237,7 +242,9 @@
           this.userStatus.push(this.roomInfo.user[i].vote_status);
           if (this.roomInfo.user[i].vote_status > 0) this.activeUserCount += 1;
         }
-        setTimeout(() => { this.$socket.emit('verifyRoom', this.$route.params.roomId); }, 1000);
+        setTimeout(() => {
+          this.$socket.emit('verifyRoom', this.$route.params.roomId);
+        }, 1000);
       },
       verifyRoomFailed () {
         this.$router.push('/');
@@ -261,8 +268,27 @@
       },
     },
     methods: {
+      onClickAddVote () {
+        this.extendAddVote = !this.extendAddVote;
+      },
+      onClickAddVoteConfirm () {
+        if (this.newVoteName !== '') {
+          console.log(this.$route.params.roomId);
+          this.$message({
+            showClose: true,
+            message: 'tada',
+          });
+          this.$socket.emit('addVote', {
+            roomId: this.$route.params.roomId,
+            question: this.newUserName,
+          });
+        }
+      },
+      onClickAddVoteCancel () {
+        this.newVoteName = '';
+        this.extendAddVote = !this.extendAddVote;
+      },
       onClickAddUser () {
-        console.log(this.$route.params.roomId);
         this.extendAddUser = !this.extendAddUser;
       },
       onClickAddUserConfirm () {

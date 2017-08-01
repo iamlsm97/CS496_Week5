@@ -58,16 +58,36 @@
     sockets: {
       verifyRoomSuccess (data) {
         console.log(data);
+        this.$message({
+          showClose: true,
+          message: `Welcome back to ${data.room.name}`,
+          type: 'success',
+        });
         this.$router.push(`/room/${data.room.token}`);
       },
       verifyRoomFailed () {
+        this.$message({
+          showClose: true,
+          message: 'Failed to verify room',
+          type: 'error',
+        });
         this.$router.push('/');
       },
       verifyUserSuccess (data) {
         console.log(data);
+        this.$message({
+          showClose: true,
+          message: `Hello, ${data.name}`,
+          type: 'success',
+        });
         this.$router.push(`/user/${this.userCode}`);
       },
       verifyUserFailed () {
+        this.$message({
+          showClose: true,
+          message: 'Failed to verify user',
+          type: 'error',
+        });
         this.$router.push('/');
       },
     },
@@ -81,11 +101,6 @@
     },
     methods: {
       enterRoomCode () {
-        this.$message({
-          showClose: true,
-          message: 'Successfully created room',
-          type: 'success',
-        });
         if (this.roomCode !== '') {
           // this.$router.push(`/room/${this.roomCode}`);
           this.$socket.emit('verifyRoom', this.roomCode);
@@ -96,7 +111,6 @@
       enterUserCode () {
         if (this.userCode !== '') {
           this.$socket.emit('verifyUser', this.userCode);
-          // this.$router.push(`/user/${this.userCode}`);
         }
       },
     },

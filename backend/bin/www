@@ -230,7 +230,7 @@ io.on('connection', (socket) => {
         socket.emit('verifyRoomFailed');
       } else {
         if (roomCode in roomList) {
-          //console.log(roomList[roomCode]);
+          // console.log(roomList[roomCode]);
           socket.emit('verifyRoomSuccess', {room: roomList[roomCode]});
         } else {
           console.log('Room not found');
@@ -339,8 +339,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('addVote', (roomId, data) => {
-    const roomTarget = roomList[roomId];
+  socket.on('addVote', (data) => {
+    const roomTarget = roomList[data.roomId];
     if (!roomTarget || data.question === '') {
       socket.emit('addVoteFailed');
     } else {
@@ -350,7 +350,7 @@ io.on('connection', (socket) => {
 
   socket.on('userVote', (userCode, result) => {
     if (userCode in uniqueList) {
-      // 0: 기권, 1: 찬성, 2: 반대
+      // 0: ??????, 1: ??????, 2: ??????
       if (result === 0 || result === 1 || result === 2) {
         if (uniqueList[userCode].room in roomList) {
           const roomTarget = roomList[uniqueList[userCode].room];
