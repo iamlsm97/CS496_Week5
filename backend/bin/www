@@ -302,7 +302,32 @@ io.on('connection', (socket) => {
       socket.emit('deleteUserSuccess');
     }
   });
-
+  socket.on('changeUserRole', (roomId, userCode) => {
+    const roomTarget = roomList[roomId];
+    console.log(roomId, userCode, roomTarget);
+    if (!roomTarget || !uniqueList[userCode]) {
+      console.log('changeUserRole error');
+      socket.emit('changeUserRoleFailed');
+    } else if (roomTarget.voting > 0) {
+      console.log('changeUserRole while Voting...');
+      socket.emit('changeUserRoleFailed');
+    } else {
+      let found = false;
+      for(let i=0;i<roomTarget.user.length;i++){
+        if(roomTarget.user[i].code === userCode){
+          roomTarget.user[i].vote_status = 1 - roomTarget.user[i].vote_status;
+          found = true;
+          console.log("succcess!");
+          socket.emit('changeUserRoleSuccess');
+          break;
+        }
+      }
+      if(!found){
+        console.log('cannot find user while changeUserRole');
+        socket.emit('changeUserRoleFailed');
+      }
+    }
+  });
   socket.on('changeLink', (roomId, newUrl) => {
     const roomTarget = roomList[roomId];
     if (!roomTarget) {
