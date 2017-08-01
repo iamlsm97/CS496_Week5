@@ -132,9 +132,9 @@
                 </md-card>
 
                 <div class="card-header-flex">
-                  <h2>21명 중 15명 활성화</h2>
+                  <h2>{{userCount}}명 중 {{activeUserCount}}명 활성화</h2>
                 </div>
-                <md-table md-sort="name" md-sort-type="asc" @select="onSelect" @sort="onSort">
+                <md-table md-sort="name" md-sort-type="asc" @select="onSelectRow">
                   <md-table-header>
                     <md-table-row md-selection="true">
                       <md-table-head md-sort-by="name">User</md-table-head>
@@ -143,43 +143,18 @@
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
-                    <md-table-row md-selection="true">
-                      <md-table-cell>mango</md-table-cell>
-                      <md-table-cell>bntjdkgm</md-table-cell>
-                      <md-table-cell>
-                        <md-button class="md-icon-button md-accent">
-                          <md-icon>clear</md-icon>
-                        </md-button>
+                    <md-table-row v-for="(row, rowIndex) in userList" :key="rowIndex" :md-item="{ key: rowIndex, info: row }" md-selection>
+                      <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex">
+                        {{column}}
                       </md-table-cell>
-                    </md-table-row>
-                    <md-table-row md-selection="true">
-                      <md-table-cell>rnango</md-table-cell>
-                      <md-table-cell>bntjdkgm</md-table-cell>
                       <md-table-cell>
-                        <md-button class="md-icon-button md-accent">
-                          <md-icon>clear</md-icon>
-                        </md-button>
-                      </md-table-cell>
-                    </md-table-row>
-                    <md-table-row md-selection="true">
-                      <md-table-cell>mango</md-table-cell>
-                      <md-table-cell>bntjdkgm</md-table-cell>
-                      <md-table-cell>
-                        <md-button class="md-icon-button md-accent">
+                        <md-button class="md-icon-button md-accent" @click="() =>{ onDeleteUser(rowIndex); }">
                           <md-icon>clear</md-icon>
                         </md-button>
                       </md-table-cell>
                     </md-table-row>
                   </md-table-body>
                 </md-table>
-                <!--<md-table-pagination
-                  md-size="5"
-                  md-total="10"
-                  md-page="1"
-                  md-label="Rows"
-                  md-separator="of"
-                  :md-page-options="[5, 10, 25, 50]"
-                  @pagination="onPagination"></md-table-pagination>-->
               </md-card-content>
             </md-card>
           </md-layout>
@@ -227,176 +202,6 @@
       <md-layout md-hide-xsmall md-hide-small md-flex-medium="10" md-flex-large="15" md-flex-xlarge="15"></md-layout>
     </md-layout>
   </div>
-  <!--
-  <div class="hello mdl-layout mdl-js-layout">
-    <header class="app-header mdl-layout__header mdl-layout__header--scroll">
-      <div class="mdl-layout__header-row">
-        <span class="mdl-layout-title">ADMIT.IO > SPARCS 2017 Summer 정기총회</span>
-        <div class="mdl-layout-spacer"></div>
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="">방 코드 복사</a>
-          <a class="mdl-navigation__link" href="">나가기</a>
-        </nav>
-      </div>
-    </header>
-    <main class="mdl-layout__content">
-      <div class="grid-vertical mdl-grid">
-        <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-        <div class="cell-showing mdl-cell mdl-cell--10-col mdl-cell--8-col-tablet mdl-cell--4-phone">
-          <div class="header-wrapper">
-            <div>
-              <h3>Showing</h3>
-            </div>
-            <div class="button-user-add">
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                <i class="material-icons">input</i>
-                 파일 변경
-              </button>
-            </div>
-            <div class="button-user-add">
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                <i class="material-icons">help</i>
-                 질문 추가
-              </button>
-            </div>
-          </div>
-          <div>
-            현재 파일: <a href="http://jihoon.me/Introduction%20to%20ACM-ICPC.pdf">http://jihoon.me/Introduction to ACM-ICPC.pdf</a>
-          </div>
-          <div class="add-vote">
-            <h4>질문 추가</h4>
-            <div class="grid-vertical mdl-grid">
-              <div class="mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--1-col-phone label-attributes label-attributes-q">Question</div>
-              <div class="mdl-cell--9-col mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-                <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text" id="sample1">
-                  <label class="mdl-textfield__label" for="sample1">Question</label>
-                </div>
-              </div>
-            </div>
-            <div class="grid-vertical mdl-grid">
-              <div class="mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--1-col-phone label-attributes">Method</div>
-              <div class="mdl-cell--9-col mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
-                  <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="1" checked>
-                  <span class="mdl-radio__label">찬성/반대</span>
-                </label>
-              </div>
-            </div>
-            <div class="button-question-add">
-              <div class="blank"></div>
-              <div>
-                <button class="mdl-button mdl-js-button mdl-button--accent">등록</button>
-              </div>
-              <div>
-                <button class="mdl-button mdl-js-button">취소</button>
-              </div>
-            </div>
-          </div>
-          <div class="add-vote">
-            <div class="vote-result-header">
-              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>???</b></h4>
-            </div>
-            <h5>(21명 중 17명 투표)</h5>
-            <h5>left: rnango, null, rongrong, seol</h5>
-          </div>
-          <div class="add-vote">
-            <div class="vote-result-header">
-              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
-            </div>
-            <h5>(21명 중 17명 찬성, 3명 반대, 1명 기권)</h5>
-          </div>
-        </div>
-        <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-      </div>
-      <div class="grid-vertical mdl-grid">
-        <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-        <div class="cell-userlist mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet mdl-cell--4-phone">
-          <div class="header-wrapper">
-            <div>
-              <h3>User List</h3>
-            </div>
-            <div class="button-user-add">
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                <i class="material-icons">add</i>
-                 Add User(s)
-              </button>
-            </div>
-          </div>
-          <div class="add-user">
-            <h4>유저 추가</h4>
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="sample3">
-              <label class="mdl-textfield__label" for="sample3">Text...</label>
-            </div>
-          </div>
-          <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-            <thead>
-              <tr>
-                <th class="mdl-data-table__cell--non-numeric">User</th>
-                <th class="mdl-data-table__cell--non-numeric">UniqueCode</th>
-                <th class="mdl-data-table__cell--non-numeric">delete?</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric">mango</td>
-                <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
-                <td class="mdl-data-table__cell--non-numeric">
-                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
-                    DELETE
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric">rongrong</td>
-                <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
-                <td class="mdl-data-table__cell--non-numeric">
-                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
-                    DELETE
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td class="mdl-data-table__cell--non-numeric">null</td>
-                <td class="mdl-data-table__cell--non-numeric">bntjdkgm</td>
-                <td class="mdl-data-table__cell--non-numeric">
-                  <button class="mdl-button mdl-js-button mdl-js-ripple-effect">
-                    DELETE
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="cell-task mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet mdl-cell--4-phone">
-          <div>
-            <h3>Past Results</h3>
-          </div>
-          <div class="add-vote">
-            <div class="vote-result-header">
-              <h4><b>이승민 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-no"><b>반대&nbsp;</b></h4>
-            </div>
-            <h5>(21명 중 3명 찬성, 17명 반대, 1명 기권)</h5>
-          </div>
-          <div class="add-vote">
-            <div class="vote-result-header">
-              <h4><b>고지훈 회원을 제명한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-yes"><b>찬성</b></h4>
-            </div>
-            <h5>(21명 중 21명 찬성, 0명 반대, 0명 기권)</h5>
-          </div>
-          <div class="add-vote">
-            <div class="vote-result-header">
-              <h4><b>고심 끝에 스팍스를 해체한다&nbsp;&nbsp;</b></h4><h4 class="vote-result-none"><b>무효</b></h4>
-            </div>
-            <h5>(21명 중 0명 찬성, 0명 반대, 21명 기권)</h5>
-          </div>
-        </div>
-        <div class="cell-blank mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-      </div>
-    </main>
-  </div>
-  -->
 </template>
 
 <script>
@@ -405,9 +210,38 @@
       return {
         extendAddUser: false,
         newUserName: '',
+        roomInfo: this.roomInfo,
+        userList: this.userList,
+        userStatus: this.userStatus,
+        userCountText: this.userCountText,
       };
     },
+    beforeCreate () {
+      console.log('Welcome!');
+      this.roomInfo = undefined;
+      this.userList = [];
+      this.userStatus = [];
+      this.activeUserCount = 0;
+      this.userCount = 0;
+      this.$socket.emit('verifyRoom', this.$route.params.roomId);
+    },
     sockets: {
+      verifyRoomSuccess (data) {
+        this.roomInfo = data.room;
+        this.userList = [];
+        this.userStatus = [];
+        this.activeUserCount = 0;
+        this.userCount = this.roomInfo.user.length;
+        for (let i = 0; i < this.roomInfo.user.length; i += 1) {
+          this.userList.push({ name: this.roomInfo.user[i].name, code: this.roomInfo.user[i].code });
+          this.userStatus.push(this.roomInfo.user[i].vote_status);
+          if (this.roomInfo.user[i].vote_status > 0) this.activeUserCount += 1;
+        }
+        setTimeout(() => { this.$socket.emit('verifyRoom', this.$route.params.roomId); }, 1000);
+      },
+      verifyRoomFailed () {
+        this.$router.push('/');
+      },
       userAddSuccess (newCode) {
         this.newUserName = '';
         this.extendAddUser = !this.extendAddUser;
@@ -434,6 +268,12 @@
       onClickAddUserCancel () {
         this.newUserName = '';
         this.extendAddUser = !this.extendAddUser;
+      },
+      onSelectRow (data) {
+        console.log(data);
+      },
+      onDeleteUser (idx) {
+        this.$socket.emit('deleteUser', this.$route.params.roomId, this.userList[idx].code);
       },
     },
   };
@@ -513,108 +353,4 @@
   .gap-closer {
     margin-top: -10px;
   }
-
-  /*
-  .hello {
-    background: #757de8;
-    color: white;
-  }
-  header {
-    color: white;
-  }
-  .cell-userlist, .cell-task, .cell-showing{
-    box-sizing: border-box;
-    color: #000000;
-    background-color: #FFFFFF;
-    padding: 20px;
-    padding-top: 0px;
-    text-align: left;
-    align-items: left;
-  }
-  .add-vote, .add-user{
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
-    box-sizing: border-box;
-    background-color: #DDDDDD;
-    margin-top: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 1px;
-    padding-bottom: 10px;
-  }
-  .add-user{
-    margin-bottom: 15px;
-  }
-  .mdl-data-table{
-    width: 100%;
-  }
-  .header-wrapper{
-    display: flex;
-  }
-  .button-user-add{
-    margin-top: 25px;
-    margin-left: 20px;
-  }
-  .label-attributes{
-    text-align: right;
-    padding-right: 10px;
-  }
-  .label-attributes-q{
-      margin-top: 4px;
-  }
-  .mdl-radio{
-    margin-top: -2px;
-  }
-  .button-question-add{
-    display: flex!important;
-    align-items: center!important;
-  }
-  .blank{
-    flex: 1;
-  }
-  .vote-result-header{
-    display: flex;
-    margin-bottom: -30px;
-  }
-  .vote-result-yes{
-    color: #00AA00;
-    min-width: 60px;
-  }
-  .vote-result-no{
-    color: #FF0000;
-    min-width: 60px;
-  }
-  .vote-result-none{
-    color: #777777;
-    min-width: 60px;
-  }
-  .mdl-textfield{
-    margin-top: -20px;
-    width: 100%;
-  }
-  .mdl-textfield__label{
-    top: 20px;
-  }
-  @media (max-width: 1439px){
-    .cell-blank{
-      display: none;
-    }
-    .cell-userlist, .cell-task{
-      width: calc(50% - 20px);
-    }
-    .cell-showing{
-      width: calc(100% - 20px);
-    }
-  }
-  @media (max-width: 800px){
-    .cell-blank{
-      display: none;
-    }
-    .cell-userlist, .cell-task{
-      width: calc(100% - 20px);
-    }
-    .cell-showing{
-      width: calc(100% - 20px);
-    }
-  }
-  */
 </style>

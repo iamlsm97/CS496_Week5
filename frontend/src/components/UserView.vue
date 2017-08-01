@@ -1,9 +1,9 @@
 <template>
   <div class="hello">
     <md-toolbar>
-      <h1 class="md-title" style="flex: 1"></h1>
+      <h1 class="md-title header-title" style="flex: 1">{{ roomName }}</h1>
       <md-button>유저 코드 복사</md-button>
-      <router-link tag="md-button" to="/">나가기</router-link>
+      <router-link tag="md-button" to="/">{{ userName }}&nbsp;-&nbsp;나가기</router-link>
     </md-toolbar>
     <md-layout md-flex-large="100" class="layout-userview">
       <md-card md-with-hover class="card-userview">
@@ -11,8 +11,8 @@
             <div class="md-title"><!--지금 하고 있는 것--> 투표 진행중 (참여 가능/불가)</div>
           </md-card-header>
           <md-card-content>
-            <!--<embed src="http://jihoon.me/Introduction%20to%20ACM-ICPC.pdf" class="readable" type='application/pdf'>-->
-            <div class="readable">
+            <embed src="http://jihoon.me/Introduction%20to%20ACM-ICPC.pdf" class="readable" :class="{hideview: (roomState !== 0)}" type='application/pdf'/>
+            <div class="readable" :class="{hideview: (roomState !== 1)}">
               <center>
                 <h1>난 오늘 치킨을 먹는다.</h1>
                 <h3>남은 시간: 1분 00초</h3>
@@ -37,8 +37,25 @@
     name: 'userview',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App',
+        roomName: this.roomName,
+        userName: this.userName,
+        roomState: this.roomState,
       };
+    },
+    beforeCreate () {
+      this.roomState = 0;
+      this.$socket.emit('verifyUser', this.$route.params.userId);
+    },
+    sockets: {
+      verifyUserSuccess (data) {
+        console.log(data);
+        this.roomName = data.room.name;
+        this.userName = data.name;
+        setTimeout(() => { this.$socket.emit('verifyUser', this.$route.params.userId); }, 1000);
+      },
+      verifyUserFailed () {
+        this.$router.push('/');
+      },
     },
   };
 </script>
@@ -68,6 +85,14 @@
   }
   .button-send-vote{
     width: 200px;
+  }
+  @media (max-width: 944px) {
+    .header-title {
+      visibility: hidden;
+    }
+  }
+  .hideview{
+    display: none;
   }
   /*
   @media (max-width: 1024px){

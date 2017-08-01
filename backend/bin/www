@@ -230,8 +230,8 @@ io.on('connection', (socket) => {
         socket.emit('verifyRoomFailed');
       } else {
         if (roomCode in roomList) {
-          console.log(roomList[roomCode]);
-          socket.emit('verifyRoomSuccess', roomList[roomCode]);
+          //console.log(roomList[roomCode]);
+          socket.emit('verifyRoomSuccess', {room: roomList[roomCode]});
         } else {
           console.log('Room not found');
           socket.emit('verifyRoomFailed');
@@ -251,7 +251,7 @@ io.on('connection', (socket) => {
         }
       }
       if (found) {
-        socket.emit('verifyRoomSuccess', roomTarget);
+        socket.emit('verifyUserSuccess', {room: roomTarget, name: uniqueList[userCode].name});
       } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');
@@ -284,6 +284,7 @@ io.on('connection', (socket) => {
 
   socket.on('deleteUser', (roomId, userCode) => {
     const roomTarget = roomList[roomId];
+    console.log(roomId, userCode, roomTarget);
     if (!roomTarget || !uniqueList[userCode]) {
       console.log('deleteUser error');
       socket.emit('deleteUserFailed');
@@ -292,6 +293,12 @@ io.on('connection', (socket) => {
       socket.emit('deleteUserFailed');
     } else {
       delete uniqueList[userCode];
+      for(let i=0;i<roomTarget.user.length;i++){
+        if(roomTarget.user[i].code === userCode){
+          roomTarget.user.splice(i, 1);
+          break;
+        }
+      }
       socket.emit('deleteUserSuccess');
     }
   });

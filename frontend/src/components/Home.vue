@@ -58,7 +58,7 @@
     sockets: {
       verifyRoomSuccess (data) {
         console.log(data);
-        this.$router.push(`/room/${this.roomCode}`);
+        this.$router.push(`/room/${data.room.token}`);
       },
       verifyRoomFailed () {
         this.$router.push('/');
