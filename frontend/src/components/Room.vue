@@ -300,7 +300,7 @@
       onClickAddVoteCancel () {
         this.newVoteName = '';
         this.extendAddVote = !this.extendAddVote;
-      }
+      },
       onClickAddUser () {
         console.log(this.$route.params.roomId);
         this.extendAddUser = !this.extendAddUser;
