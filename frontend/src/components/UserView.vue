@@ -8,22 +8,41 @@
     <md-layout md-flex-large="100" class="layout-userview">
       <md-card md-with-hover class="card-userview">
           <md-card-header>
-            <div class="md-title"><!--지금 하고 있는 것--> 투표 진행중 (참여 가능/불가)</div>
+            <div class="md-title" v-if="onVote === 0">지금 하고 있는 것</div>
+            <div class="md-title" v-else-if="onVote === 1 && isActive">투표 진행중 (참여 가능)</div>
+            <div class="md-title" v-else-if="onVote === 1 && !isActive">투표 진행중 (참여 불가)</div>
+            <div class="md-title" v-if="onVote === 2">투표 결과 공개!</div>
           </md-card-header>
           <md-card-content>
-            <embed :src="showUrl" :key="showUrl" class="readable" :class="{hideview: (roomState !== 0)}" type='application/pdf'/>
-            <div class="readable" :class="{hideview: (roomState !== 1)}">
+            <embed :src="showUrl" :key="showUrl" class="readable" :class="{hideview: (onVote !== 0)}" type='application/pdf'/>
+            <div class="readable" :class="{hideview: (onVote !== 1)}">
               <center>
-                <h1>난 오늘 치킨을 먹는다.</h1>
-                <h3>남은 시간: 1분 00초</h3>
+                <h1>{{ question }}</h1>
+                <!-- <h3>남은 시간: 1분 00초</h3> -->
                 <br>
                 <div>
-                  <md-button class="md-raised md-primary">찬성</md-button>
-                  <md-button class="md-raised">반대</md-button>
-                  <md-button class="md-raised">기권</md-button>
+                  <md-button class="md-raised"
+                             :class= "{'md-primary': userChoice === 1}"
+                             @click="() => { chooseChange(1) }">
+                    찬성
+                  </md-button>
+                  <md-button class="md-raised"
+                             :class= "{'md-primary': userChoice === 2}"
+                             @click="() => { chooseChange(2) }">
+                    반대
+                  </md-button>
+                  <md-button class="md-raised"
+                             :class= "{'md-primary': userChoice === 0}"
+                             @click="() => { chooseChange(0) }">
+                    기권
+                  </md-button>
                 </div>
                 <br>
-                <md-button class="md-raised md-accent button-send-vote">결정! <!--수정!--></md-button>
+                <md-button class="btn md-raised md-accent button-send-vote"
+                           :class="{disabled: !isActive}"
+                           @click="submitAnswer">
+                  결정!
+                </md-button>
               </center>
             </div>
           </md-card-content>
@@ -39,25 +58,45 @@
       return {
         roomName: this.roomName,
         userName: this.userName,
-        roomState: this.roomState,
         showUrl: this.showUrl,
+        onVote: this.onVote,
+        question: this.question,
+        userChoice: this.userChoice,
+        isActive: this.isActive,
       };
     },
     beforeCreate () {
-      this.roomState = 0;
+      this.onVote = 0;
+      this.userChoice = 0;
+      this.isActive = false;
       this.showUrl = 'about:blank;';
       this.$socket.emit('verifyUser', this.$route.params.userId);
     },
     sockets: {
       verifyUserSuccess (data) {
-        console.log(data);
+        // console.log(data);
         this.roomName = data.room.name;
         this.userName = data.name;
         this.showUrl = data.room.showUrl;
+        this.onVote = data.room.voting;
+        this.question = data.room.voteQuestion;
+        this.isActive = data.isActive;
+        // console.log(this.onVote);
         setTimeout(() => { this.$socket.emit('verifyUser', this.$route.params.userId); }, 100);
       },
       verifyUserFailed () {
         this.$router.push('/');
+      },
+    },
+    methods: {
+      chooseChange (idx) {
+        this.userChoice = idx;
+      },
+      submitAnswer () {
+        console.log(this.isActive);
+        if (this.isActive) {
+          this.$socket.emit('userVote', this.$route.params.userId, this.userChoice);
+        }
       },
     },
   };

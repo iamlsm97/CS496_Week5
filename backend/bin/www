@@ -131,9 +131,13 @@ class Room {
     // vote_status: 0 -> cannot vote, 1 -> can vote
     this.voteResult = [];
     this.voting = 0;
+    this.voteQuestion = '';
     this.showUrl = 'about:blank;';
     // 0: no voting, 1: 
     this.voteList = [];
+    this.voteLeft = [];
+    this.currentVote = {};
+    this.totalActiveCount = 0;
   }
 
   addUser (name, code) {
@@ -149,46 +153,72 @@ class Room {
     }
   }
 
-  startVote (socket) {
+  startVote (question) {
     this.voting = 1;
     this.voteResult = [];
     this.voteList = [];
+    this.voteLeft = [];
+    this.voteQuestion = question;
     for (let i = 0; i < this.user.length; i += 1) {
       this.voteResult.push(-1);
       if (this.user[i].vote_status > 0) {
-        this.voteList.push({ name, vote: -1 });
+        this.voteList.push({ name: this.user[i].name, vote: -1 });
+        this.voteLeft.push(this.user[i].name);
       }
     }
-    socket.emit('addVoteSuccess', {
-      total: this.voteList.length,
-    });
+    this.totalActiveCount = this.voteLeft.length;
+    this.currentVote = { now: 0, total: this.totalActiveCount };
     const updateVoteStatus = setInterval(() => {
       if (!this.voting) {
         clearInterval(updateVoteStatus);
-        socket.emit('finishOnVoteSuccess');
       } else {
         const rtnList = [];
+        const rtnLeftList = [];
         let voteCnt = 0;
         for (let i = 0; i < this.user.length; i += 1) {
           if (this.user[i].vote_status > 0) {
-            rtnList.push({ name, vote: this.voteResult[i] });
+            rtnList.push({ name: this.user[i].name, vote: this.voteResult[i] });
             if (this.voteResult[i] >= 0) {
               voteCnt += 1;
+            }else{
+              rtnLeftList.push(this.user[i].name);
             }
           }
         }
         this.voteList = rtnList;
-        socket.emit('realTimeCurrentVote', {
-          now: voteCnt,
-        });
+        this.voteLeft = rtnLeftList;
+        this.currentVote = { now: voteCnt, total: this.totalActiveCount };
       }
     }, 200);
   }
-
-  getVoteList () {
-    return this.voteList;
+  getStatus (isAdmin) {
+    if(isAdmin){
+      return {
+        name: this.name,
+        voting: this.voting,
+        voteQuestion: this.voteQuestion,
+        showUrl: this.showUrl,
+        user: this.user,
+        voteResult: this.voteResult,
+      };
+    }else{
+      return {
+        name: this.name,
+        voting: this.voting,
+        voteQuestion: this.voteQuestion,
+        showUrl: this.showUrl,
+      };
+    }
   }
-
+  getVoteStatus () {
+    return {
+      currentVote: this.currentVote,
+      voteLeft: this.voteLeft,
+    };
+  }
+  getVoteResult () {
+    return {who: "Seungmin"};
+  }
   finishVote () {
     this.voting = 2;
     setTimeout(() => {
@@ -226,7 +256,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('verifyRoom', (roomCode) => {
-
     try {
       jwt.verify(base64url.decode(roomCode), secret_key, function (err, decoded) {
         if (err) {
@@ -234,8 +263,12 @@ io.on('connection', (socket) => {
           socket.emit('verifyRoomFailed');
         } else {
           if (roomCode in roomList) {
+            const roomTarget = roomList[roomCode];
             // console.log(roomList[roomCode]);
-            socket.emit('verifyRoomSuccess', { room: roomList[roomCode] });
+            socket.emit('verifyRoomSuccess', { room: roomTarget.getStatus(true) });
+            if(roomTarget.voting === 1){
+              socket.emit('realTimeCurrentVote', roomTarget.getVoteStatus());
+            }
           } else {
             console.log('Room not found');
             socket.emit('verifyRoomFailed');
@@ -250,15 +283,19 @@ io.on('connection', (socket) => {
   socket.on('verifyUser', (userCode) => {
     if ((userCode in uniqueList) && (uniqueList[userCode].room in roomList)) {
       let found = false;
+      let isActive = false;
       const roomTarget = roomList[uniqueList[userCode].room];
       for (let i = 0; i < roomTarget.user.length; i += 1) {
         if (roomTarget.user[i].code === userCode) {
           found = true;
+          isActive = (roomTarget.user[i].vote_status === 1);
+          // console.log(isActive, roomTarget.user[i].vote_status);
           break;
         }
       }
+      // console.log(isActive);
       if (found) {
-        socket.emit('verifyUserSuccess', { room: roomTarget, name: uniqueList[userCode].name });
+        socket.emit('verifyUserSuccess', { room: roomTarget.getStatus(false), name: uniqueList[userCode].name, isActive: isActive});
       } else {
         console.log('User already deleted');
         socket.emit('verifyUserFailed');
@@ -269,7 +306,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('createUser', data => {
+  socket.on('createUser', (data) => {
     console.log(data.roomId);
     console.log(data.userName);
     console.log(roomList);
@@ -350,18 +387,19 @@ io.on('connection', (socket) => {
     const roomTarget = roomList[data.roomId];
     if (!roomTarget || data.question === '') {
       socket.emit('addVoteFailed');
-    } else if (roomTarget.voting === 1) {
+    } else if (roomTarget.voting > 0) {
       socket.emit('addVoteFailed', {
         message: 'This room is already on voting',
       });
     } else {
-      roomTarget.startVote(socket);
+      socket.emit('addVoteSuccess');
+      roomTarget.startVote(data.question);
     }
   });
 
   socket.on('finishOnVote', (data) => {
     const roomTarget = roomList[data.roomId];
-    if (!roomTarget) {
+    if (!roomTarget || roomTarget.voting !== 1) {
       socket.emit('finishOnVoteFailed');
     } else {
       roomTarget.finishVote();
@@ -370,7 +408,7 @@ io.on('connection', (socket) => {
 
   socket.on('userVote', (userCode, result) => {
     if (userCode in uniqueList) {
-      // 0: ??????, 1: ??????, 2: ??????
+      // 0: None, 1: ADMIT, 2: F**K
       if (result === 0 || result === 1 || result === 2) {
         if (uniqueList[userCode].room in roomList) {
           const roomTarget = roomList[uniqueList[userCode].room];
@@ -383,6 +421,7 @@ io.on('connection', (socket) => {
             }
           }
           if (found) {
+            console.log('userVoteSuccess');
             socket.emit('userVoteSuccess');
           } else {
             console.log('userVoteFailed - You do not have any access');

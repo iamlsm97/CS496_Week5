@@ -19,8 +19,8 @@
                   </md-button>
                 </div>
                 <div class="button-with-h1">
-                  <md-button class="md-raised md-primary">
-                    <md-icon class="button-icon" @click="onClickAddVote">add</md-icon>&nbsp;질문 추가
+                  <md-button class="md-raised md-primary" @click="onClickAddVote">
+                    <md-icon class="button-icon">add</md-icon>&nbsp;질문 추가
                   </md-button>
                 </div>
               </div>
@@ -45,7 +45,7 @@
                   <h3 class="h3-left-text" style="min-width: 110px!important;">질문</h3>
                   <md-input-container md-clearable>
                     <label>질문</label>
-                    <md-input></md-input>
+                    <md-input v-model="newVoteName"></md-input>
                   </md-input-container>
                 </div>
                 <div class="card-header-flex">
@@ -57,16 +57,20 @@
                 </div>
               </md-card-content>
             </md-card>
-            <md-card md-with-hover class="card-inner" v-if="onVote">
+            <md-card md-with-hover class="card-inner" v-if="onVote === 1">
               <md-card-header>
                 <div class="card-header-flex">
-                  <h2>{{currentVote.name}}&nbsp;&nbsp;</h2>
-                  <h2 class="vote-result-none"><b>진행 중</b></h2>
-                  <md-button class="md-raised md-accent" @click="finishOnVote" v-loading.fullscreen="finishVoteLoading">
+                  <div class="card-header-flex" style="flex: 1;">
+                    <h2>{{voteQuestion}}&nbsp;&nbsp;</h2>
+                    <h3 class="vote-result-none"><b>진행 중</b></h3>
+                  </div>
+                  <!-- v-loading.fullscreen="finishVoteLoading" -->
+                  <md-button class="md-raised md-accent" @click="finishOnVote">
                     투표 종료
                   </md-button>
                 </div>
                 <h3 class="gap-closer">현재 {{currentVote.total}}명 중 {{currentVote.now}}명 투표</h3>
+                <h3 class="gap-closer">left: {{voteLeftStr}}</h3>
               </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
@@ -270,10 +274,12 @@
         userStatus: this.userStatus,
         userCountText: this.userCountText,
 
-        onVote: false,
-        currentVote: {},
+        onVote: this.onVote,
+        voteQuestion: this.voteQuestion,
+        currentVote: this.currentVote,
         pastVote: [],
         finishVoteLoading: false,
+        voteLeft: this.voteLeft,
 
         currentUrl: this.currentUrl,
         roomTitle: this.roomTitle,
@@ -289,6 +295,10 @@
       this.isFirst = true;
       this.currentUrl = '';
       this.roomTitle = '';
+      this.onVote = 0;
+      this.voteQuestion = '';
+      this.currentVote = { now: -1, total: -1 };
+      this.voteLeft = [];
       this.$socket.emit('verifyRoom', this.$route.params.roomId);
     },
     sockets: {
@@ -298,6 +308,15 @@
         this.userStatus = [];
         this.activeUserCount = 0;
         this.userCount = this.roomInfo.user.length;
+        this.onVote = this.roomInfo.voting;
+        if (this.onVote > 0) {
+          this.extendAddVote = false;
+          this.voteQuestion = this.roomInfo.voteQuestion;
+          this.newVoteName = '';
+        } else {
+          this.currentVote = { now: -1, total: -1 };
+          this.voteLeft = [];
+        }
         if (this.isFirst) {
           this.isFirst = false;
           this.currentUrl = data.room.showUrl;
@@ -308,20 +327,14 @@
           this.userStatus.push(this.roomInfo.user[i].vote_status);
           if (this.roomInfo.user[i].vote_status > 0) this.activeUserCount += 1;
         }
-        // console.log(this.userStatus);
         setTimeout(() => {
           this.$socket.emit('verifyRoom', this.$route.params.roomId);
-        }, 100);
+        }, 200);
       },
       verifyRoomFailed () {
         this.$router.push('/');
       },
-      addVoteSuccess (data) {
-        this.currentVote.name = this.newVoteName;
-        this.extendAddVote = false;
-        this.newVoteName = '';
-        this.onVote = true;
-        this.currentVote.total = data.total;
+      addVoteSuccess () {
         this.$message({
           showClose: true,
           message: 'Successfully added vote',
@@ -346,11 +359,11 @@
         }
       },
       realTimeCurrentVote (data) {
-        this.currentVote.now = data.now;
+        this.currentVote = { now: data.currentVote.now, total: data.currentVote.total };
+        this.voteLeft = data.voteLeft;
+        // console.log(this.voteLeft);
       },
       finishOnVoteSuccess () {
-        this.onVote = false;
-        this.currentVote = {};
         // pastVote에 추가
         this.finishVoteLoading = false;
         this.$message({
@@ -385,10 +398,39 @@
         console.log('failed to add user');
       },
     },
+    computed: {
+      voteLeftStr () {
+        // console.log(this.voteLeft);
+        let retStr = '';
+        for (let i = 0; i < this.voteLeft.length; i += 1) {
+          if (i === 0) retStr = this.voteLeft[0];
+          else {
+            retStr += ', ';
+            retStr += this.voteLeft[i];
+          }
+        }
+        return retStr;
+      },
+    },
     methods: {
       onClickAddVote () {
+        console.log('!!!');
         this.extendAddVote = !this.extendAddVote;
       },
+      /*
+      voteLeftStr2 () {
+        // console.log(this.voteLeft);
+        let retStr = '';
+        for (let i = 0; i < this.voteLeft.length; i += 1) {
+          if (i === 0) retStr = this.voteLeft[0];
+          else {
+            retStr += ', ';
+            retStr += this.voteLeft[i];
+          }
+        }
+        // console.log(retStr);
+        return retStr;
+      }, */
       onClickAddVoteConfirm () {
         if (this.newVoteName !== '') {
           console.log(this.$route.params.roomId);
