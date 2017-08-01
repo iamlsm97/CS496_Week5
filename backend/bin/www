@@ -101,6 +101,7 @@ function onListening () {
 
 const jwt = require('jsonwebtoken');
 const secret_key = require('../keys/jwt_secret');
+const base64url = require('base64url');
 
 function getRandStr (length) {
   const letter = [];
@@ -214,7 +215,7 @@ io.on('connection', (socket) => {
         console.log('token creation failed');
         socket.emit('creationFailed');
       } else {
-        roomId = token;
+        roomId = base64url(token);
         const newRoom = new Room(roomName, roomId);
         roomList[roomId] = newRoom;
         console.log(roomList);
@@ -224,7 +225,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('verifyRoom', (roomCode) => {
-    jwt.verify(roomCode, secret_key, function (err, decoded) {
+    jwt.verify(base64url.decode(roomCode), secret_key, function (err, decoded) {
       if (err) {
         console.log('token verify failed!');
         socket.emit('verifyRoomFailed');
