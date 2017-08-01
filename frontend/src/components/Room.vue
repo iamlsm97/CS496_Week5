@@ -72,13 +72,20 @@
                 <h3 class="gap-closer">현재 {{currentVote.total}}명 중 {{currentVote.now}}명 투표</h3>
               </md-card-header>
             </md-card>
-            <md-card md-with-hover class="card-inner">
+            <md-card md-with-hover class="card-inner" v-for="pastVote in pastVotes" :key="pastVote.voteQuestion">
               <md-card-header>
                 <div class="card-header-flex">
-                  <h2>오늘은 야식을 먹어야 한다!&nbsp;&nbsp;</h2>
-                  <h3 class="vote-result-none"><b>진행 중</b></h3>
+                  <h2>{{pastVote.voteQuestion}}&nbsp;&nbsp;</h2>
+                  <div style="min-width: 80px; width: 80px;">
+                    <h3 v-if="pastVote.result==='agree'" class="vote-result-yes"><b>찬성</b></h3>
+                    <h3 v-else-if="pastVote.result==='none'" class="vote-result-none"><b>무효</b></h3>
+                    <h3 v-else class="vote-result-no"><b>반대</b></h3>
+                  </div>
                 </div>
-                <h3 class="gap-closer">현재 21명 중 17명 투표</h3>
+                <div class="vote-information-h3">
+                  <h3 class="gap-closer">총 {{pastVote.total}}명 중&nbsp;</h3>
+                  <h3 class="gap-closer">찬성 {{pastVote.agree}}, 반대 {{pastVote.disagree}}, 기권 {{pastVote.none}}</h3>
+                </div>
               </md-card-header>
             </md-card>
             <md-card md-with-hover class="card-inner">
@@ -281,6 +288,8 @@
 
         currentUrl: this.currentUrl,
         roomTitle: this.roomTitle,
+
+        pastVotes: this.pastVotes,
       };
     },
     beforeCreate () {
@@ -297,6 +306,7 @@
       this.voteQuestion = '';
       this.currentVote = { now: -1, total: -1 };
       this.$socket.emit('verifyRoom', this.$route.params.roomId);
+      this.pastVotes = [];
     },
     sockets: {
       verifyRoomSuccess (data) {
@@ -355,7 +365,12 @@
         }
       },
       realTimeCurrentVote (data) {
-        this.currentVote = { now: data.currentVote.now, total: data.currentVote.total };
+        this.currentVote = {
+          now: data.currentVote.now,
+          total: data.currentVote.total,
+        };
+        this.pastVotes = data.pastResult;
+        console.log(this.pastVotes);
       },
       finishOnVoteSuccess () {
         // pastVote에 추가

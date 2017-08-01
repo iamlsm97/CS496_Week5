@@ -138,6 +138,8 @@ class Room {
     this.voteLeft = [];
     this.currentVote = {};
     this.totalActiveCount = 0;
+
+    this.pastResult = [];
   }
 
   addUser (name, code) {
@@ -162,7 +164,7 @@ class Room {
     for (let i = 0; i < this.user.length; i += 1) {
       this.voteResult.push(-1);
       if (this.user[i].vote_status > 0) {
-        wholCnt += 1;
+        // wholCnt += 1;
         this.voteList.push({ name: this.user[i].name, vote: -1 });
         this.voteLeft.push(this.user[i].name);
       }
@@ -181,7 +183,7 @@ class Room {
             rtnList.push({ name: this.user[i].name, vote: this.voteResult[i] });
             if (this.voteResult[i] >= 0) {
               voteCnt += 1;
-            }else{
+            } else {
               rtnLeftList.push(this.user[i].name);
             }
           }
@@ -192,8 +194,9 @@ class Room {
       }
     }, 200);
   }
+
   getStatus (isAdmin) {
-    if(isAdmin){
+    if (isAdmin) {
       return {
         name: this.name,
         voting: this.voting,
@@ -202,7 +205,7 @@ class Room {
         user: this.user,
         voteResult: this.voteResult,
       };
-    }else{
+    } else {
       return {
         name: this.name,
         voting: this.voting,
@@ -211,17 +214,54 @@ class Room {
       };
     }
   }
+
   getVoteStatus () {
     return {
       currentVote: this.currentVote,
       voteLeft: this.voteLeft,
+      pastResult: this.pastResult,
     };
   }
+
   getVoteResult () {
-    return {who: "Seungmin"};
+    return { who: 'Seungmin' };
   }
+
   finishVote () {
     this.voting = 2;
+    let agree = 0;
+    let disagree = 0;
+    let none = 0;
+    let result = '';
+    for (let i = 0; i < this.voteList.length; i += 1) {
+      if (this.voteList[i].vote === 0) {
+        none += 1;
+      } else if (this.voteList[i].vote === 1) {
+        agree += 1;
+      } else if (this.voteList[i].vote === 2) {
+        disagree += 1;
+      }
+    }
+
+    if (none * 2 > this.currentVote.total) {
+      result = 'none';
+    } else if (agree > disagree) {
+      result = 'agree';
+    } else if (agree < disagree) {
+      result = 'disagree';
+    } else {
+      result = 'none';
+    }
+
+    this.pastResult.unshift({
+      voteQuestion: this.voteQuestion,
+      total: this.currentVote.total,
+      agree,
+      disagree,
+      none,
+      result,
+    });
+
     setTimeout(() => {
       this.voting = 0;
     }, 3000);
@@ -267,7 +307,7 @@ io.on('connection', (socket) => {
             const roomTarget = roomList[roomCode];
             // console.log(roomList[roomCode]);
             socket.emit('verifyRoomSuccess', { room: roomTarget.getStatus(true) });
-            if(roomTarget.voting === 1){
+            if (roomTarget.voting === 1 || roomTarget.voting === 2) {
               socket.emit('realTimeCurrentVote', roomTarget.getVoteStatus());
             }
           } else {
@@ -399,6 +439,7 @@ io.on('connection', (socket) => {
     if (!roomTarget || roomTarget.voting !== 1) {
       socket.emit('finishOnVoteFailed');
     } else {
+      socket.emit('finishOnVoteSuccess');
       roomTarget.finishVote();
     }
   });
