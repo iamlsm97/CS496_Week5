@@ -2,8 +2,8 @@
   <div class="hello">
     <md-toolbar>
       <h1 class="md-title header-title" style="flex: 1">{{ roomName }}</h1>
-      <md-button>유저 코드 복사</md-button>
-      <router-link tag="md-button" to="/">{{ userName }}&nbsp;-&nbsp;나가기</router-link>
+      <md-button>{{ userName }}</md-button>
+      <router-link tag="md-button" to="/">나가기</router-link>
     </md-toolbar>
     <md-layout md-flex-large="100" class="layout-userview">
       <md-card md-with-hover class="card-userview">
