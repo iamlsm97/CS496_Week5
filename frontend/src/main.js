@@ -6,16 +6,17 @@ import VueAxios from 'vue-axios';
 import socketio from 'socket.io-client';
 import VueSocketio from 'vue-socket.io';
 import VueMaterial from 'vue-material';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
 import App from './App.vue';
 import router from './router';
 import store from './store'; // vuex store instance
-// import pdf from 'vue-pdf';
 
 Vue.use(VueMaterial);
-// Vue.use(pdf);
+Vue.use(ElementUI);
 Vue.use(VueAxios, axios);
-Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
-// Vue.use(VueSocketio, socketio('http://localhost:3000'), store);
+// Vue.use(VueSocketio, socketio('http://52.78.113.241:3000'), store);
+Vue.use(VueSocketio, socketio('http://localhost:3000'), store);
 
 
 Vue.config.productionTip = false;

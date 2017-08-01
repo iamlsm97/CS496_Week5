@@ -81,6 +81,11 @@
     },
     methods: {
       enterRoomCode () {
+        this.$message({
+          showClose: true,
+          message: 'Successfully created room',
+          type: 'success',
+        });
         if (this.roomCode !== '') {
           // this.$router.push(`/room/${this.roomCode}`);
           this.$socket.emit('verifyRoom', this.roomCode);

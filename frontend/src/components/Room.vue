@@ -243,12 +243,21 @@
         this.$router.push('/');
       },
       userAddSuccess (newCode) {
+        this.$message({
+          showClose: true,
+          message: 'Successfully added user',
+          type: 'success',
+        });
         this.newUserName = '';
         this.extendAddUser = !this.extendAddUser;
         console.log(`newCode is ${newCode}`);
       },
       userAddFailed () {
-        console.log('failed to add user');
+        this.$message({
+          showClose: true,
+          message: 'Failed to add user',
+          type: 'error',
+        });
       },
     },
     methods: {

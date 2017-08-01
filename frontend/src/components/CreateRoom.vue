@@ -41,9 +41,19 @@
     },
     sockets: {
       creationSuccess (roomId) {
+        this.$message({
+          showClose: true,
+          message: 'Successfully created room',
+          type: 'success',
+        });
         this.$router.push(`/room/${roomId}`);
       },
       creationFailed () {
+        this.$message({
+          showClose: true,
+          message: 'Failed to creat room',
+          type: 'error',
+        });
         this.$router.push('/');
       },
     },
