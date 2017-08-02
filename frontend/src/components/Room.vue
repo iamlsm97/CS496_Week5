@@ -240,8 +240,9 @@
       this.voteQuestion = '';
       this.currentVote = { now: -1, total: -1 };
       this.voteLeft = [];
-      this.$socket.emit('verifyRoom', this.$route.params.roomId);
       this.pastVotes = [];
+      this.$socket.emit('verifyRoom', this.$route.params.roomId);
+      this.$socket.emit('getPastResults', this.$route.params.roomId);
     },
     sockets: {
       verifyRoomSuccess (data) {

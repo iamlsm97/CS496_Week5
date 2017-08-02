@@ -320,7 +320,26 @@ io.on('connection', (socket) => {
       socket.emit('verifyRoomFailed');
     }
   });
-
+  socket.on('getPastResults', (roomCode) => {
+    try {
+      jwt.verify(base64url.decode(roomCode), secret_key, function (err, decoded) {
+        if (err) {
+          console.log('token verify failed!');
+          socket.emit('verifyRoomFailed');
+        } else {
+          if (roomCode in roomList) {
+            const roomTarget = roomList[roomCode];
+            socket.emit('resultVote', roomTarget.getVoteResult());
+          } else {
+            console.log('Room not found');
+            socket.emit('verifyRoomFailed');
+          }
+        }
+      });
+    } catch (err) {
+      socket.emit('verifyRoomFailed');
+    }
+  });
   socket.on('verifyUser', (userCode) => {
     if ((userCode in uniqueList) && (uniqueList[userCode].room in roomList)) {
       let found = false;
